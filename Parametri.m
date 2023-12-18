@@ -2,7 +2,7 @@
 
 % massa, attrito, inerzia %
 m = 1500;
-c_a = 0;%15;
+c_a = 15;
 J = 3000;
 
 % Lunghezze %
@@ -40,7 +40,7 @@ laserD_params = [laserD_sample_rates, laserD_resolution, laserD_accuracy];
 % relative encoder omega:
 
 r = 0.2;   % [m]
-encoder_accuracy = 1;
+encoder_accuracy = 2*pi/1200; % [rad]
 encoder_resolution = 2*pi/1200; % [rad/pulse]
 encoder_sample_rates = 1/50;    % [s]
 encoder_params = [r, encoder_accuracy, encoder_resolution, encoder_sample_rates];
@@ -50,7 +50,8 @@ encoder_params = [r, encoder_accuracy, encoder_resolution, encoder_sample_rates]
 sample_rates = [encoder_sample_rates, laserD_sample_rates, laserd1_sample_rates]; % sample rates of all the sensors period
 min_sample_rates = max(sample_rates); % slowest one
 
-theta_old = 0;
 
 q_hat_in = zeros(4,1);
+P_k_in = eye(4);
 
+R_k = diag([(laserD_accuracy/1000)^2, (laserd1_accuracy/1000)^2, (encoder_accuracy/encoder_sample_rates)^2]);
