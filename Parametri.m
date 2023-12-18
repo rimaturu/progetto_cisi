@@ -50,7 +50,5 @@ encoder_params = [r, encoder_accuracy, encoder_resolution, encoder_sample_rates]
 sample_rates = [encoder_sample_rates, laserD_sample_rates, laserd1_sample_rates]; % sample rates of all the sensors period
 min_sample_rates = max(sample_rates); % slowest one
 
-
-
-
+theta_old = 0;
 
