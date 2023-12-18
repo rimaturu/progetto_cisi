@@ -52,3 +52,5 @@ min_sample_rates = max(sample_rates); % slowest one
 
 theta_old = 0;
 
+q_hat_in = zeros(4,1);
+
