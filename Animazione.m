@@ -33,8 +33,7 @@ title('Moto Funivia')
 % Parametri Cabina %
 high_cab = 1;
 width_cab = 2;
-bar = 0.05;
-pul = 0.08;         
+bar = 0.05;         
 
 % Geometria Punti di Interesse %
 rect_x = q_pp(1,1) + h*sin(q_pp(3,1)) - width_cab/2;
@@ -56,7 +55,7 @@ R_r(2) = line([y_x; end_asta_x], [y_z; end_asta_z], 'LineStyle', '-', 'Color', '
 % Posizione Baricentro %
 R_r(3) = rectangle('Position', [q_pp(1,1) - bar/2, -(q_pp(2,1) + bar/2), bar, bar], 'Curvature', [1,1], 'EdgeColor', 'b', 'LineWidth', 2);
 % Posizione Puleggia Cabina %
-R_r(4) = rectangle('Position', [q_pp(1,1) - l*sin(q_pp(3,1)) - pul/2, -(q_pp(2,1) - l*cos(q_pp(3,1)) + pul/2), pul, pul], 'Curvature', [1,1], 'EdgeColor', 'r', 'LineWidth', 2);
+R_r(4) = rectangle('Position', [q_pp(1,1) - (l+r)*sin(q_pp(3,1)) - r, -(q_pp(2,1) - (l+r)*cos(q_pp(3,1)) + r), 2*r, 2*r], 'Curvature', [1,1], 'EdgeColor', 'r', 'LineWidth', 2);
 
 %% Plot Dinamico Funivia %%
 for i=1:1:size(q_pp,2)
@@ -81,7 +80,7 @@ for i=1:1:size(q_pp,2)
     R_r(1) = rectangle('Position', [rect_x(i), rect_z(i), width_cab, high_cab], 'EdgeColor', 'g', 'LineWidth', 3);
     R_r(2) = line([y_x(i); end_asta_x(i)], [y_z(i); end_asta_z(i)], 'LineStyle', '-', 'Color', 'g', 'LineWidth', 3);
     R_r(3) = rectangle('Position', [q_pp(1,i) - bar/2, -(q_pp(2,i) + bar/2), bar, bar], 'Curvature', [1,1], 'EdgeColor', 'b', 'LineWidth', 2);
-    R_r(4) = rectangle('Position', [q_pp(1,i) - l*sin(q_pp(3,i)) - pul/2, -(q_pp(2,i) - l*cos(q_pp(3,i)) +pul/2), pul, pul], 'Curvature', [1,1], 'EdgeColor', 'r', 'LineWidth', 2);
+    R_r(4) = rectangle('Position', [q_pp(1,i) - (l+r)*sin(q_pp(3,i)) - r, -(q_pp(2,i) - (l+r)*cos(q_pp(3,i)) + r), 2*r, 2*r], 'Curvature', [1,1], 'EdgeColor', 'r', 'LineWidth', 2);
     
     drawnow
     pause(dt)

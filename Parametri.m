@@ -9,13 +9,14 @@ J = 3000;
 L = 2.2;
 l = L - 1.2;
 h = 1;
+r = 0.2;   % [m]
 
-g = 9.80;
+g = 9.81;
 
-params = [m, c_a, J, L, l, h, g];
+params = [m, c_a, J, L, l, h, r, g];
 
 % Condizioni Iniziali %
-F_0 = +100;
+F_0 = +200;
 dq_0 = [0; 0];
 q_0 = [0; 0];
 
@@ -39,7 +40,6 @@ laserD_params = [laserD_sample_rates, laserD_resolution, laserD_accuracy];
 
 % relative encoder omega:
 
-r = 0.2;   % [m]
 encoder_accuracy = 2*pi/1200; % [rad]
 encoder_resolution = 2*pi/1200; % [rad/pulse]
 encoder_sample_rates = 1/50;    % [s]
