@@ -16,7 +16,7 @@ g = 9.81;
 params = [m, c_a, J, L, l, h, r, g];
 
 % Condizioni Iniziali %
-F_0 = +100;
+F_0 = +700;
 dq_0 = [0; 0];
 q_0 = [0; 0];
 
@@ -39,7 +39,6 @@ laserD_accuracy = 20;        % [mm]    % TODO:check if +-20 mm is the dev std or
 laserD_params = [laserD_sample_rates, laserD_resolution, laserD_accuracy];
 
 % relative encoder omega:
-
 encoder_accuracy = 2*pi/1200; % [rad]
 encoder_resolution = 2*pi/1200; % [rad/pulse]
 encoder_sample_rates = 1/50;    % [s]
