@@ -59,6 +59,7 @@ end_asta_z = -(q_pp(2,1) - L*cos(q_pp(3,1)));
 
 % Traiettoria Baricentro %
 R_l(1) = plot(q_pp(1,1), -q_pp(2,1), 'LineStyle', '-', 'Color', [0.2 .7 .5], 'LineWidth', 1);
+legend(R_l(1), 'Traiett. Baricentro', 'AutoUpdate', 'off')
 % Cabina %
 R_r(1) = rectangle('Position', [rect_x, rect_z, width_cab, high_cab], 'EdgeColor', 'g', 'LineWidth', 3);
 % Giunto Cabina-Fune %
@@ -67,6 +68,7 @@ R_r(2) = line([y_x; end_asta_x], [y_z; end_asta_z], 'LineStyle', '-', 'Color', '
 R_r(3) = rectangle('Position', [q_pp(1,1) - bar/2, -(q_pp(2,1) + bar/2), bar, bar], 'Curvature', [1,1], 'EdgeColor', 'b', 'LineWidth', 2);
 % Posizione Puleggia Cabina %
 R_r(4) = rectangle('Position', [q_pp(1,1) - (l+r)*sin(q_pp(3,1)) - r, -(q_pp(2,1) - (l+r)*cos(q_pp(3,1)) + r), 2*r, 2*r], 'Curvature', [1,1], 'EdgeColor', 'r', 'LineWidth', 2);
+
 %% Plot Dinamico Funivia (multi_plot)%%
 if multiplot
     for i = 1:1:size(q_pp,2)
@@ -100,7 +102,7 @@ if multiplot
         i_sampled = round(i + (dt/0.02))
         subplot(3,2,3);
         hold on
-        plot(q_hat_computed.Time(1:i_sampled,1), q_hat_computed.Data(1:i_sampled,3), 'b', 'LineWidth', 1.5, 'DisplayName', "x_EKF");
+        plot(q_hat_computed.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 3), 'b', 'LineWidth', 1.5, 'DisplayName', "x_EKF");
         plot(q_true.Time(1:i_sampled), q_true.Data(1, 1:i_sampled), 'g', 'LineWidth', 1.5, 'DisplayName', "x_true");
         title('x\_hat vs x\_true');
         xlabel('Time');
@@ -110,7 +112,7 @@ if multiplot
         % Plot q_hat_computed(4) beneath the main plot
         subplot(3,2,4);
         hold on
-        plot(q_true.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled,4), 'r', 'LineWidth', 1.5, 'DisplayName', "theta_EKF");
+        plot(q_true.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 4), 'r', 'LineWidth', 1.5, 'DisplayName', "theta_EKF");
         plot(q_true.Time(1:i_sampled), q_true.Data(2, 1:i_sampled), 'g', 'LineWidth', 1.5, 'DisplayName', "theta_true");
         title('theta\_hat vs theta\_true');
         xlabel('Time');
