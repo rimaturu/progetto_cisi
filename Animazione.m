@@ -1,6 +1,6 @@
 %% ----- Animazione Modello Funivia ----- %%
 close all
-multiplot = false;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
+multiplot = true;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
 
 dt  =  0.03;
 
@@ -69,6 +69,8 @@ R_r(3) = rectangle('Position', [q_pp(1,1) - bar/2, -(q_pp(2,1) + bar/2), bar, ba
 % Posizione Puleggia Cabina %
 R_r(4) = rectangle('Position', [q_pp(1,1) - (l+r)*sin(q_pp(3,1)) - r, -(q_pp(2,1) - (l+r)*cos(q_pp(3,1)) + r), 2*r, 2*r], 'Curvature', [1,1], 'EdgeColor', 'r', 'LineWidth', 2);
 
+i_sampled = 1;   % indice per il sampling dei grafici
+
 %% Plot Dinamico Funivia (multi_plot)%%
 if multiplot
     for i = 1:1:size(q_pp,2)
@@ -99,7 +101,7 @@ if multiplot
         ylim([-(q_pp(2,i) + 7), -(q_pp(2,i) - 3)]);
     
         % Plot q_hat_computed(3) beneath the main plot
-        i_sampled = round(i + (dt/0.02))
+        i_sampled = round(i_sampled + (dt/0.02));
         subplot(3,2,3);
         hold on
         plot(q_hat_computed.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 3), 'b', 'LineWidth', 1.5, 'DisplayName', "x_EKF");
