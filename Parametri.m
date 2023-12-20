@@ -18,7 +18,7 @@ params = [m, c_a, J, L, l, h, r, g];
 % Condizioni Iniziali %
 F_0 = +700;
 dq_0 = [0; 0];
-q_0 = [0; 0];
+q_0 = [0; pi/12];
 
 
 %% parametri sensori
@@ -54,3 +54,9 @@ q_hat_in = zeros(4,1);
 P_k_in = eye(4);
 
 R_k = diag([(laserD_accuracy/1000)^2, (laserd1_accuracy/1000)^2, (encoder_accuracy/encoder_sample_rates)^2]);
+
+q_hat_0 = [ dq_0(1) + normrnd(0, 1);
+            dq_0(2) + normrnd(0, 1);
+            q_0(1) + normrnd(0, 100);
+            q_0(2) + normrnd(0, pi/2)];
+

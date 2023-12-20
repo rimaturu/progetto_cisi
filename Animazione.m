@@ -2,6 +2,7 @@
 close all
 multiplot = true;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
 
+
 dt  =  0.03;
 
 % Creazione figura
@@ -59,7 +60,6 @@ end_asta_z = -(q_pp(2,1) - L*cos(q_pp(3,1)));
 
 % Traiettoria Baricentro %
 R_l(1) = plot(q_pp(1,1), -q_pp(2,1), 'LineStyle', '-', 'Color', [0.2 .7 .5], 'LineWidth', 1);
-legend(R_l(1), 'Traiett. Baricentro', 'AutoUpdate', 'off')
 % Cabina %
 R_r(1) = rectangle('Position', [rect_x, rect_z, width_cab, high_cab], 'EdgeColor', 'g', 'LineWidth', 3);
 % Giunto Cabina-Fune %
@@ -101,7 +101,7 @@ if multiplot
         ylim([-(q_pp(2,i) + 7), -(q_pp(2,i) - 3)]);
     
         % Plot q_hat_computed(3) beneath the main plot
-        i_sampled = round(i_sampled + (dt/0.02));
+        i_sampled = round(i_sampled + (dt/min_sample_rates));
         subplot(3,2,3);
         hold on
         plot(q_hat_computed.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 3), 'b', 'LineWidth', 1.5, 'DisplayName', "x_EKF");
@@ -110,16 +110,18 @@ if multiplot
         xlabel('Time');
         ylabel('x [m]');
         grid on;
+        legend("x EKF", "x true");
         
         % Plot q_hat_computed(4) beneath the main plot
         subplot(3,2,4);
         hold on
-        plot(q_true.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 4), 'r', 'LineWidth', 1.5, 'DisplayName', "theta_EKF");
-        plot(q_true.Time(1:i_sampled), q_true.Data(2, 1:i_sampled), 'g', 'LineWidth', 1.5, 'DisplayName', "theta_true");
+        plot(q_true.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 4), 'r', 'LineWidth', 1.5, 'DisplayName', "theta\_EKF");
+        plot(q_true.Time(1:i_sampled), q_true.Data(2, 1:i_sampled), 'g', 'LineWidth', 1.5, 'DisplayName', "theta\_true");
         title('theta\_hat vs theta\_true');
         xlabel('Time');
         ylabel('theta [rad]');
         grid on;
+        legend("theta\_EKF", "theta\_true");
     
         % Plot x_error
         subplot(3,2,5);
@@ -129,6 +131,7 @@ if multiplot
         xlabel('Time');
         ylabel('x [m]');
         grid on;
+        legend("x error");
         
         % Plot theta_error
         subplot(3,2,6);
@@ -138,6 +141,7 @@ if multiplot
         xlabel('Time');
         ylabel('theta [rad]');
         grid on;
+        legend("theta error");
     
         %legend('Location', 'best');
         drawnow
