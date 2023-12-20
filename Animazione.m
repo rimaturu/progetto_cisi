@@ -1,6 +1,6 @@
 %% ----- Animazione Modello Funivia ----- %%
 close all
-multiplot = true;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
+multiplot = false;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
 
 dt  =  0.03;
 
@@ -120,7 +120,7 @@ if multiplot
         % Plot x_error
         subplot(3,2,5);
         hold on
-        plot(x_error.Time(1:i_sampled), x_error.Data(i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "x_error");
+        plot(x_error.Time(1:i_sampled), x_error.Data(1, 1:i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "x_error");
         title('x\_error (EKF - true)');
         xlabel('Time');
         ylabel('x [m]');
@@ -129,13 +129,13 @@ if multiplot
         % Plot theta_error
         subplot(3,2,6);
         hold on
-        plot(theta_error.Time(1:i_sampled), theta_error.Data(i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "theta_error");
+        plot(theta_error.Time(1:i_sampled), theta_error.Data(1, 1:i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "theta_error");
         title('theta\_error (EKF - true)');
         xlabel('Time');
         ylabel('theta [rad]');
         grid on;
     
-        % legend('Location', 'best');
+        %legend('Location', 'best');
         drawnow
         
         pause(dt)
