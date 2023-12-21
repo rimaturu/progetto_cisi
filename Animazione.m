@@ -3,7 +3,7 @@ close all
 multiplot = true;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
 
 
-dt  =  0.03;
+dt  =  0.06;
 
 % Creazione figura
 f = figure;

@@ -18,7 +18,7 @@ params = [m, c_a, J, L, l, h, r, g];
 % Condizioni Iniziali %
 F_0 = +700;
 dq_0 = [0; 0];
-q_0 = [0; pi/12];
+q_0 = [0; 0];
 
 
 %% parametri sensori
