@@ -16,7 +16,7 @@ g = 9.81;
 params = [m, c_a, J, L, l, h, r, g];
 
 % Condizioni Iniziali %
-F_0 = +700;
+F_0 = +7000;
 dq_0 = [0; 0];
 q_0 = [0; 0];
 
