@@ -1,7 +1,9 @@
 %% ----- Animazione Modello Funivia ----- %%
 close all
-multiplot = true;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
 
+% ENTRAMBI NON POSSONO ESSERE TRUE
+multiplot = false;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
+innovaz_plot = true;
 
 dt  =  0.06;
 
@@ -21,6 +23,11 @@ q_true = get(out, "q_true");
 x_error = get(out, "x_error");
 theta_error = get(out, "theta_error");
 
+% Innovazione misure EKF
+e_k_D = get(out, "e_k_D");
+e_k_d1 = get(out, "e_k_d1");
+e_k_omega = get(out, "e_k_omega");
+
 % Ricampionamento temporale a dt
 time  =  0 : dt : tout(end);
 q_pp  =  zeros(size(q,1),size(time,2));
@@ -32,7 +39,7 @@ for i  =  1 : size(time,2)
 end
 
 %% Movimento Funivia %%
-if multiplot
+if (multiplot | innovaz_plot)
     subplot(3, 2, [1, 2]);
 end
 
@@ -149,7 +156,73 @@ if multiplot
         pause(dt)
         
     end
-else
+end
+if innovaz_plot
+    for i = 1:1:size(q_pp,2)
+        subplot(3, 2, [1, 2]);
+        cla;
+        
+        line([q_pp(1,i)-5, q_pp(1,i)+30], [0, 0], 'LineStyle','-','Color','k','LineWidth',1);
+        line([q_pp(1,i)-5, q_pp(1,i)+30], [-1.2, -1.2], 'LineStyle','-','Color','k','LineWidth',1);
+    
+        % Geometria Punti di Interesse %
+        rect_x(i) = q_pp(1,i) + h*sin(q_pp(3,i)) - width_cab/2;
+        rect_z(i) = -(q_pp(2,i) + h*cos(q_pp(3,i)) + high_cab/2);
+    
+        y_x(i) = q_pp(1,i) + h*sin(q_pp(3,i));
+        y_z(i) = -(q_pp(2,i) + h*cos(q_pp(3,i)));
+    
+        end_asta_x(i) = q_pp(1,i) - L*sin(q_pp(3,i));
+        end_asta_z(i) = -(q_pp(2,i) - L*cos(q_pp(3,i)));
+    
+        R_l(1) = plot(q_pp(1,1:i), -q_pp(2,1:i), 'LineStyle', '-', 'Color', [0.2 .7 .5], 'LineWidth', 1);
+        R_r(1) = rectangle('Position', [rect_x(i), rect_z(i), width_cab, high_cab], 'EdgeColor', 'g', 'LineWidth', 3);
+        R_r(2) = line([y_x(i); end_asta_x(i)], [y_z(i); end_asta_z(i)], 'LineStyle', '-', 'Color', 'g', 'LineWidth', 3);
+        R_r(3) = rectangle('Position', [q_pp(1,i) - bar/2, -(q_pp(2,i) + bar/2), bar, bar], 'Curvature', [1,1], 'EdgeColor', 'b', 'LineWidth', 2);
+        R_r(4) = rectangle('Position', [q_pp(1,i) - (l+r)*sin(q_pp(3,i)) - r, -(q_pp(2,i) - (l+r)*cos(q_pp(3,i)) + r), 2*r, 2*r], 'Curvature', [1,1], 'EdgeColor', 'r', 'LineWidth', 2);
+    
+        % Aggiorno gli assi con la coordinata della cabina
+        xlim([q_pp(1,i) - 5, q_pp(1,i) + 30]);
+        ylim([-(q_pp(2,i) + 7), -(q_pp(2,i) - 3)]);
+    
+        % Plot innovazione D
+        i_sampled = round(i_sampled + (dt/min_sample_rates));
+        subplot(3,2,3);
+        hold on
+        plot(e_k_D.Time(1:i_sampled), e_k_D.Data(1:i_sampled), 'b', 'LineWidth', 1, 'DisplayName', "e_k_D");
+        title('Innovazione misura D');
+        xlabel('Time');
+        ylabel('[m]');
+        grid on;
+        legend("e\_k\_D");
+        
+        % Plot innovazione d1
+        subplot(3,2,4);
+        hold on
+        plot(e_k_d1.Time(1:i_sampled), e_k_d1.Data(1:i_sampled), 'b', 'LineWidth', 1, 'DisplayName', "e\_k\_d1");
+        title('Innovazione misura d1');
+        xlabel('Time');
+        ylabel('[m]');
+        grid on;
+        legend("e\_k\_d1");
+    
+        % Plot innovazione omega_enc
+        subplot(3,2,[5, 6]);
+        hold on
+        plot(e_k_omega.Time(1:i_sampled), e_k_omega.Data(1:i_sampled), 'b', 'LineWidth', 1, 'DisplayName', "e\_k\_omega");
+        title('Innovazione misura omega');
+        xlabel('Time');
+        ylabel('[Rad/s]');
+        grid on;
+        legend("e\_k\_omega");
+        
+        drawnow
+        
+        pause(dt)
+        
+    end
+end
+if (~multiplot & ~innovaz_plot)     
     %% Plot Dinamico Funivia  (single plot)%%
     for i = 1:1:size(q_pp,2)
         cla;
