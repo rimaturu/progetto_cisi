@@ -1,0 +1,16 @@
+
+PASSI PRELIMINARI:
+
+- Scarica Connect Tunnel seguendo le indicazioni del link "https://start.unipi.it/en/help-ict/vpn/" (selezionando INTERNET ATTRAVERSO UNIPI) e accedere con le proprie credenziali di ateneo
+
+INSTALLAZIONE NX:
+- Andare nella barra di ricerca di Windows e  scrivere \\131.114.28.28 
+- adunipi\username_ateneo + password
+- Software-->2023-2024-->Siemens-->Simcenter Prescan360 2307 installer
+- Scaricare il file Simcenter Prescan360 2307 installer
+- Avviare l'installer
+- Proseguire fino alla richiesta di "port@hostname" e inserire "28000@p6-lm3.ad.unipi.it"
+- Completare l'installazione
+- Avviare Prescan e, al messaggio di mancata licenza andare su "File --> Utilities --> Select Bundles" e poi cliccare su ognuna delle tre voce e premere "ADD"
+
+Per utilizzare il software dovete sempre tenere accesa la VPN di ateneo
