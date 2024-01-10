@@ -5,7 +5,7 @@ close all
 multiplot = true;  %<------------ NEW VARIABLE TO SET MULTIPLOT OPTION
 innovaz_plot = false;
 
-dt  =  0.06;
+dt  =  0.1;
 
 % Creazione figura
 f = figure;
@@ -155,7 +155,7 @@ if multiplot
         %legend('Location', 'best');
         drawnow
         
-        pause(dt)
+        pause(0.005)
         
     end
 end
@@ -220,7 +220,7 @@ if innovaz_plot
         
         drawnow
         
-        pause(dt)
+        pause(0.005)
         
     end
 end
@@ -254,7 +254,7 @@ if (~multiplot & ~innovaz_plot)
    
         drawnow
         
-        pause(dt)
+        pause(0.005)
         
     end
 end
