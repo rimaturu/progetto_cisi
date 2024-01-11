@@ -18,11 +18,14 @@ P_k_n = P_k_corr;      % P_n_n
 
 % Algoritmo di regolarizzazione
 for k = (N-1):-1:1
-
+    
+    % Ck = P_k|k * F_k+1' * (P_k+1|k)^-1
     C_k = P_k_corr(:,:,k) * F_k_smooth(:,:,k+1)' * ((P_k_pred(:,:,k+1)) ^ (-1));
-
+    
+    % x_k|n = x_k|k + Ck * (x_k+1|n - x_k+1|k)
     q_k_n(:,k) = q_hat_corr(k,:)' + C_k * (q_k_n(:,k+1) - q_hat_pred(:,:,k+1));
     
-    P_k_n(:,:,k) = P_k_corr(:,:,k) + C_k * (P_k_n(:,:,k+1) - P_k_pred(:,:,k+1));
+    % P_k|n = P_k|k + Ck * (P_k+1|n - P_k+1|k) * Ck'
+    P_k_n(:,:,k) = P_k_corr(:,:,k) + C_k * (P_k_n(:,:,k+1) - P_k_pred(:,:,k+1)) * C_k';
 
 end
