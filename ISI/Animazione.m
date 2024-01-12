@@ -111,9 +111,9 @@ if multiplot
         i_sampled = round(i_sampled + (dt/min_sample_rates));
         subplot(3,2,3);
         hold on
-        plot(q_hat_computed.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 3), 'b', 'LineWidth', 1.5, 'DisplayName', "x\_EKF");
-        plot(q_true.Time(1:i_sampled), q_true.Data(1, 1:i_sampled), 'g', 'LineWidth', 1.5, 'DisplayName', "x\_true");
-        plot(q_true.Time(1:i_sampled), q_k_n(3, 1:i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "x\_smooth\_EKF");
+        plot(q_hat_computed.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 3), 'b', 'LineWidth', 1, 'DisplayName', "x\_EKF");
+        plot(q_true.Time(1:i_sampled), q_true.Data(1, 1:i_sampled), 'g', 'LineWidth', 1, 'DisplayName', "x\_true");
+        plot(q_true.Time(1:i_sampled), q_k_n(3, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "x\_smooth\_EKF");
         title('x\_hat vs x\_true vs x\_smooth\_EKF');
         xlabel('Time');
         ylabel('x [m]');
@@ -123,9 +123,9 @@ if multiplot
         % Plot q_hat_computed(4) beneath the main plot
         subplot(3,2,4);
         hold on
-        plot(q_true.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 4), 'b', 'LineWidth', 1.5, 'DisplayName', "theta\_EKF");
-        plot(q_true.Time(1:i_sampled), q_true.Data(2, 1:i_sampled), 'g', 'LineWidth', 1.5, 'DisplayName', "theta\_true");
-        plot(q_true.Time(1:i_sampled), q_k_n(4, 1:i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "theta\_smooth\_EKF");
+        plot(q_true.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 4), 'b', 'LineWidth', 1, 'DisplayName', "theta\_EKF");
+        plot(q_true.Time(1:i_sampled), q_true.Data(2, 1:i_sampled), 'g', 'LineWidth', 1, 'DisplayName', "theta\_true");
+        plot(q_true.Time(1:i_sampled), q_k_n(4, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "theta\_smooth\_EKF");
         title('theta\_hat vs theta\_true vs theta\_smooth\_EKF');
         xlabel('Time');
         ylabel('theta [rad]');
@@ -135,7 +135,7 @@ if multiplot
         % Plot x_error
         subplot(3,2,5);
         hold on
-        plot(x_error.Time(1:i_sampled), x_error.Data(1, 1:i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "x_error");
+        plot(x_error.Time(1:i_sampled), x_error.Data(1, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "x_error");
         title('x\_error (EKF - true)');
         xlabel('Time');
         ylabel('x [m]');
@@ -145,7 +145,7 @@ if multiplot
         % Plot theta_error
         subplot(3,2,6);
         hold on
-        plot(theta_error.Time(1:i_sampled), theta_error.Data(1, 1:i_sampled), 'r', 'LineWidth', 1.5, 'DisplayName', "theta_error");
+        plot(theta_error.Time(1:i_sampled), theta_error.Data(1, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "theta_error");
         title('theta\_error (EKF - true)');
         xlabel('Time');
         ylabel('theta [rad]');
