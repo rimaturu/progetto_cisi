@@ -24,5 +24,12 @@ Km1 = 1;
 Km2 = 1;
 Tm1 = 1;
 Tm2 = 1;
-
 T1 = 1;
+
+%% sensors
+
+gps_var = 10;
+heading_var = 1;
+f_s = 100;
+
+
