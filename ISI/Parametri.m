@@ -16,7 +16,7 @@ g = 9.81;
 params = [m, c_a, J, L, l, h, r, g];
 
 % Condizioni Iniziali %
-F_0 = 500;
+F_0 = 50;
 dq_0 = [0; 0];
 q_0 = [0; 0];
 
@@ -59,4 +59,5 @@ q_hat_0 = [ dq_0(1) + normrnd(0, 0.1);
             dq_0(2) + normrnd(0, 0.1);
             q_0(1) + normrnd(0, 0.1);
             q_0(2) + normrnd(0, pi/20)];
+
 
