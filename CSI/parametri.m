@@ -8,6 +8,7 @@ d33 = 1;    %[kg/s]
 
 params = [m11, m22, m33, d11, d22, d33];
 
+% Condizioni iniziali
 tau_u_0 = 0;
 tau_r_0 = 0;
 
@@ -18,6 +19,8 @@ r_0 = 0;
 x_0 = 0;
 y_0 = 0;
 phi_0 = 0;
+
+q_hat_0 = [u_0; v_0; r_0; phi_0];
 
 % TODO
 Km1 = 1;
@@ -30,6 +33,7 @@ T1 = 1;
 
 gps_var = 10;
 heading_var = 1;
+R_k = blkdiag(gps_var, gps_var, heading_var);
 f_s = 100;
 
 
