@@ -17,7 +17,7 @@ params = [m, c_a, J, L, l, h, r, g];
 params_incert = [m + normrnd(400, 100), c_a - normrnd(1, 0.2), J + normrnd(500, 50), L, l, h, r, g];
 
 % Condizioni Iniziali %
-F_0 = 50;
+F_0 = 500;
 dq_0 = [0; 0];
 q_0 = [0; 0];
 
@@ -60,5 +60,6 @@ q_hat_0 = [ dq_0(1) + normrnd(0, 0.1);
             dq_0(2) + normrnd(0, 0.1);
             q_0(1) + normrnd(0, 0.1);
             q_0(2) + normrnd(0, pi/20)];
+
 
 
