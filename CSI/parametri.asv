@@ -12,11 +12,13 @@ d33_nom = 1;    %[kg/s]
 
 params_nom = [m11_nom, m22_nom, m33_nom, d11_nom, d22_nom, d33_nom];
 
+% m11 = 19;   %[kg]
 m11 = ureal('m11', m11_nom, 'Percentage', [-50, 50]);
 m22 = 35;   %[kg]
 m33 = 4;   %[kg]
 
 d11 = 3;    %[kg/s]
+% d22 = 10;    %[kg/s]
 d22 = ureal('d22', d22_nom, 'Percentage', [-50, 50]);
 d33 = 1;    %[kg/s]
 
@@ -131,4 +133,4 @@ WP = blkdiag(wP1, wP2, wP3);     % Matrice peso per S
 % Sintesi Controllore
 [K1, CLaug1, GAM1, ~] = mixsyn(H_mimo, [], [], []);
 
-K1 = zpk(K1);
+K1 = zpk(K1)
