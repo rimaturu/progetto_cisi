@@ -2,6 +2,8 @@ clear
 close all
 clc
 
+s = tf('s');
+
 m11_nom = 19;   %[kg]
 m22_nom = 35;   %[kg]
 m33_nom = 4;    %[kg]
@@ -12,12 +14,12 @@ d33_nom = 1;    %[kg/s]
 
 params_nom = [m11_nom, m22_nom, m33_nom, d11_nom, d22_nom, d33_nom];
 
-m11 = ureal('m11', m11_nom, 'Percentage', [-50, 50]);
+m11 = ureal('m11', m11_nom, 'Percentage', [-10, 10]);
 m22 = 35;   %[kg]
 m33 = 4;   %[kg]
 
 d11 = 3;    %[kg/s]
-d22 = ureal('d22', d22_nom, 'Percentage', [-50, 50]);
+d22 = ureal('d22', d22_nom, 'Percentage', [-10, 10]);
 d33 = 1;    %[kg/s]
 
 params = [m11, m22, m33, d11, d22, d33];
@@ -43,7 +45,8 @@ Km1 = 1;
 Km2 = 1;
 Tm1 = 1;
 Tm2 = 1;
-T1 = 1;
+T1_nom = 1;
+T1 = ureal('T1', T1_nom, 'Percentage', [-5,5]);
 
 %% sensors
 
@@ -100,34 +103,55 @@ sys_mimo_nom = ss(A_nom, B_nom, C_nom, D_nom);
 simplify(sys_mimo, "full");
 simplify(sys_mimo_nom, "full");
 
-H_mimo = tf(sys_mimo);
-H_mimo_nom = tf(sys_mimo_nom);
-
-% Poli e Zeri 
-Poli_MIMO = pole(H_mimo_nom);
-Zeri_MIMO = tzero(H_mimo_nom);  % trasmission zero
+% H_mimo = tf(sys_mimo);
+% H_mimo_nom = tf(sys_mimo_nom);
+% 
+% % Poli e Zeri 
+% Poli_MIMO = pole(H_mimo_nom);
+% Zeri_MIMO = tzero(H_mimo_nom);  % trasmission zero
 
 Gs_rand = usample(sys_mimo, 100);
 bodemag(Gs_rand);
 
-% Calcolo matrici di peso
-wu = 1;
-WU = blkdiag(wu, wu);       % Matrice peso per KS
+% % Calcolo matrici di peso
+% wu = 1;
+% WU = blkdiag(wu, wu);       % Matrice peso per KS
+% 
+% A = 1e-2;
+% M = 1;
+% wB1 = 1;
+% wB2 = 1;
+% 
+% % wP = (s/M+wB1)/(s+wB1*A);
+% wP1 = makeweight(1/A, [0.01, (0.01/M+wB1)/(0.01+wB1*A)], 1/M);    
+% wP2 = makeweight(1/A, [0.01, (0.01/M+wB1)/(0.01+wB1*A)], 1/M);
+% 
+% WP = blkdiag(wP1, wP2);     % Matrice peso per S
+% 
+% % Sintesi Controllore
+% [K1_real, CLaug1, GAM1, ~] = mixsyn(H_mimo, [], [], []);
+% 
+% K1_real = zpk(K1_real);
+% 
+% K1 = minreal(K1_real);
 
-A = 1e-2;
-M = 1;
-wB1 = 1;
-wB2 = 1;
+%% Attuators
+% tau_u attuator
+G_u = Km1/(Tm1*s+1)/(T1*s+1);
+G_u = tf(G_u);
 
-% wP = (s/M+wB1)/(s+wB1*A);
-wP1 = makeweight(1/A, [0.01, (0.01/M+wB1)/(0.01+wB1*A)], 1/M);    
-wP2 = makeweight(1/A, [0.01, (0.01/M+wB1)/(0.01+wB1*A)], 1/M);
+% tau_v attuator
+G_v = Km2/(Tm2*s+1)/(Tm2/100*s+1);
+G_v = tf(G_v);
 
-WP = blkdiag(wP1, wP2);     % Matrice peso per S
+G_att = [G_u 0;0 G_v];
 
-% Sintesi Controllore
-[K1_real, CLaug1, GAM1, ~] = mixsyn(H_mimo, [], [], []);
+%%
 
-K1_real = zpk(K1_real);
+G_tot = H_mimo * G_att;
 
-K1 = minreal(K1_real);
+[P,delta,struct] = lftdata(G_tot);
+
+
+
+
