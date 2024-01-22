@@ -71,10 +71,9 @@ B = [(1/m11),   0;
     0   ,      0];
 
 C = [cos(phi),  -sin(phi),  0,  -u*sin(phi) - v*cos(phi);
-     sin(phi),   cos(phi),  0,   u*cos(phi) - v*sin(phi);
-        0,          0,      1,              0];
+     sin(phi),   cos(phi),  0,   u*cos(phi) - v*sin(phi)];
 
-D = [0,0;0,0;0,0];
+D = [0,0;0,0];
 
 % Modello stato nominale
 A_nom = [-(d11_nom/m11_nom),                (m22_nom/m11_nom)*r,                (m22_nom/m11_nom)*v,        0;
@@ -88,10 +87,9 @@ B_nom = [(1/m11_nom),   0;
         0   ,          0];
 
 C_nom = [cos(phi),  -sin(phi),  0,  -u*sin(phi) - v*cos(phi);
-         sin(phi),   cos(phi),  0,   u*cos(phi) - v*sin(phi);
-            0,          0,      1,              0];
+         sin(phi),   cos(phi),  0,   u*cos(phi) - v*sin(phi)];
 
-D_nom = [0,0;0,0;0,0];
+D_nom = [0,0;0,0];
 
 
 % Conversione in matrice di trasferimento MIMO
@@ -119,16 +117,17 @@ WU = blkdiag(wu, wu);       % Matrice peso per KS
 A = 1e-2;
 M = 1;
 wB1 = 1;
-wB2 = wB1;
+wB2 = 1;
 
 % wP = (s/M+wB1)/(s+wB1*A);
 wP1 = makeweight(1/A, [0.01, (0.01/M+wB1)/(0.01+wB1*A)], 1/M);    
 wP2 = makeweight(1/A, [0.01, (0.01/M+wB1)/(0.01+wB1*A)], 1/M);
-wP3 = makeweight(1/A, [0.01, (0.01/M+wB1)/(0.01+wB1*A)], 1/M);
 
-WP = blkdiag(wP1, wP2, wP3);     % Matrice peso per S
+WP = blkdiag(wP1, wP2);     % Matrice peso per S
 
 % Sintesi Controllore
-[K1, CLaug1, GAM1, ~] = mixsyn(H_mimo, [], [], []);
+[K1_real, CLaug1, GAM1, ~] = mixsyn(H_mimo, [], [], []);
 
-K1 = zpk(K1);
+K1_real = zpk(K1_real);
+
+K1 = minreal(K1_real);
