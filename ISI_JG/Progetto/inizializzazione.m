@@ -45,22 +45,22 @@ sensor.d2.seed = 45;                            %seed per generare i soliti rumo
 
 %% Caratteristiche dell'ingresso
 % ingresso Fext
-Fext.mean_value = 0;                            %[N]
-Fext.std_dev = sqrt(1000*0.05/3);              %[N]
+Fext.mean_value = 500;                          %[N]
+Fext.std_dev = sqrt(1000*0.05/3);               %[N]
 Fext.seed = 71;                                 %seed per generare i soliti rumori
 
 
 %% Inizializzazione stato dei modelli nominale e reale
 % Media dello stato iniziale
-x0 = 0;                                        %[m]        %variabile=[tempo valore]
+x0 = 0;                                         %[m]        %variabile=[tempo valore]
 x0_d = 0;                                       %[m/s]
 tetha0 = 0;                                     %[rad]
 tetha0_d = 0;                                   %[rad/s]
 % Deviazione standard dello stato iniziale
-x_std_dev = 0;%5;                                  %[m]
-x_d_std_dev = 0;%0.1;                              %[m/s]
-tetha_std_dev = 0;%pi/8;                           %[rad]
-tetha_d_std_dev = 0;%pi/16;                        %[rad/s]
+x_std_dev = 5;                                  %[m]
+x_d_std_dev = 0.1;                              %[m/s]
+tetha_std_dev = pi/8;                           %[rad]
+tetha_d_std_dev = pi/16;                        %[rad/s]
 
 % Genero lo stato iniziale dei sistemi in modo casuale
 % metto in forma vettoriale
@@ -82,7 +82,7 @@ P0 = [init.q_std_dev(1,1)^2 0 0 0;...                           %uso la deviazio
       0 0 init.q_d_std_dev(1,1)^2 0;...
       0 0 0 init.q_d_std_dev(2,2)^2];
 % PF
-N = 6000;                                       %numero particelle per PF
+N = 200;                                       %numero particelle per PF
 particles0 = mvnrnd (x0_hat, P0, N);            %genero le particelle
 weights0 = 1/N*ones(N,1);                       %inizializzo i pesi
 

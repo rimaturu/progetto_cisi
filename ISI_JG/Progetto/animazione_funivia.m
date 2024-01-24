@@ -5,7 +5,7 @@ clear all
 
 %avvio lo script di inizializzazione
 inizializzazione;
-T_simulazione = 10;
+T_simulazione = 100;
 funivia = sim("Nominal_model.slx");                                     %creo struttura con tutti gli out dati da simulink
 %funivia = sim("Real_model.slx");                                       %creo struttura con tutti gli out dati da simulink
 
@@ -226,10 +226,11 @@ end
 %% plot regolarizzazione EKF
 
 %variabile creata a causa di un errore dato da matlab utilizzando la variabile tout
-tempo = zeros(size(q_ekf,3),1);                     
-for i = 1 : 1 : size(q_ekf,3)
-    tempo(i) = tout(i);
-end
+% tempo = zeros(size(q_ekf,3),1);                     
+% for i = 1 : 1 : size(q_ekf,3)
+%     tempo(i) = tout(i);
+% end
+tempo = tout;
 
 %plot theta
 figure(2)
@@ -245,11 +246,15 @@ theta_mod = zeros(size(q_ekf,3),1);
 theta_EKF = zeros(size(q_ekf,3),1);
 theta_EKF_smooth = zeros(size(q_ekf,3),1);
 theta_PF = zeros(size(q_ekf,3),1);
+theta_d_EKF = zeros(size(q_ekf,3),1);
+theta_d_PF = zeros(size(q_ekf,3),1);
 for i = 1 : 1 : size(q_ekf,3)
     theta_mod(i) = q_mod(2,1,i);
     theta_EKF(i) = funivia.x_hat_EKF_Correction.Data(2,1,i);
     theta_EKF_smooth(i) = q_ekf(2,1,i);
     theta_PF(i) = x_hat_part(2,1,i);
+    theta_d_EKF(i)  = funivia.x_hat_EKF_Correction.Data(4,1,i);
+    theta_d_PF(i) = x_hat_part(4,1,i);
 end
 
 %plot in sovrapposizione di modello e filtri per theta
@@ -279,11 +284,15 @@ x_mod = zeros(size(q_ekf,3),1);
 x_EKF = zeros(size(q_ekf,3),1);
 x_EKF_smooth = zeros(size(q_ekf,3),1);
 x_PF = zeros(size(q_ekf,3),1);
+x_d_EKF = zeros(size(q_ekf,3),1);
+x_d_PF = zeros(size(q_ekf,3),1);
 for i = 1 : 1 : size(q_ekf,3)
     x_mod(i) = q_mod(1,1,i);
     x_EKF(i) = funivia.x_hat_EKF_Correction.Data(1,1,i);
     x_EKF_smooth(i) = q_ekf(1,1,i);
     x_PF(i) = x_hat_part(1,1,i);
+    x_d_EKF(i)  = funivia.x_hat_EKF_Correction.Data(3,1,i);
+    x_d_PF(i) = x_hat_part(3,1,i);
 end
 
 %plot in sovrapposizione di modello e filtri per x
@@ -356,51 +365,61 @@ hold off
 %% Plot grafici modello 
 
 figure(8)
-hold on
 figure('color','white')
 
 
 for i = 1 : 1 : size(q_ekf,3)
     x_d_mod(i) = q_d_mod(1,1,i);
-    theta_d_mod(i) = q_mod(2,1,i);
+    theta_d_mod(i) = q_d_mod(2,1,i);
 end
 
 %creo i subplot
 subplot(2,2,1,'position',[0.05, 0.55, 0.42 ,0.4])
+hold on
 grid on
 box on
-plot(tempo, x_mod , 'm', 'LineWidth', 1.2)
+plot(tempo, x_mod , 'b', 'LineWidth', 2)
+plot(tempo, x_EKF,'r', 'LineWidth', 1.2);
 ylabel('x [m]')
 xlabel('time [s]')
-legend('x')
+legend('x','x-EKF')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
 
 subplot(2,2,2,'position',[0.55, 0.55, 0.42 ,0.4])
+hold on
 grid on
 box on
-plot(tempo, theta_mod , 'm', 'LineWidth', 1.2)
+plot(tempo, theta_mod , 'b', 'LineWidth', 2)
+plot(tempo, theta_EKF,'r', 'LineWidth', 1.2);
 ylabel('theta [m]')
 xlabel('time [s]')
-legend('theta')
+legend('theta','theta-EKF')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
 
 subplot(2,2,3,'position',[0.05, 0.075, 0.42 ,0.4])
+hold on
 grid on
 box on
-plot(tempo, x_d_mod , 'm', 'LineWidth', 1.2)
+plot(tempo, x_d_mod , 'b', 'LineWidth', 2)
+plot(tempo, x_d_EKF,'r', 'LineWidth', 1.2);
 ylabel('x_{dot} [m]')
 xlabel('time [s]')
-legend('x_{dot}')
+legend('x_{dot}','x_{dot}-EKF')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
 
 subplot(2,2,4,'position',[0.55, 0.075, 0.42 ,0.4])
+hold on
 grid on
 box on
-plot(tempo, theta_d_mod , 'm', 'LineWidth', 1.2)
+plot(tempo, theta_d_mod , 'b', 'LineWidth', 2)
+plot(tempo, theta_d_EKF,'r', 'LineWidth', 1.2);
 ylabel('theta_{dot} [m]')
 xlabel('time [s]')
-legend('theta_{dot}')
+legend('theta_{dot}','theta_{dot}-EKF')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
-
 hold off
+
 
