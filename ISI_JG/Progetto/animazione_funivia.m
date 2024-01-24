@@ -5,12 +5,12 @@ clear all
 
 %avvio lo script di inizializzazione
 inizializzazione;
-T_simulazione = 100;
+T_simulazione = 30;
 funivia = sim("Nominal_model.slx");                                     %creo struttura con tutti gli out dati da simulink
 %funivia = sim("Real_model.slx");                                       %creo struttura con tutti gli out dati da simulink
 
 plot_dinamico = false;
-%prendo i parametri dallo sript di inizializzazione
+%prendo i parametri dallo script di inizializzazione
 h = param.h;
 L = param.L;
 l = param.l;
@@ -21,7 +21,7 @@ high_cabin = param.High_cabin;
 %creazione figura
 if(plot_dinamico)
      f = figure;
-     f.WindowState = 'maximized';                                           %metto figura a schermo intero
+     f.WindowState = 'maximized';                                       %metto figura a schermo intero
 end
 
 %%
@@ -40,7 +40,7 @@ tout = funivia.tout(1:size(x_hat_ekf,3),1);
 %caso che si commenti la regolarizzazione
 x_hat_EKF_smoothed = funivia.x_hat_EKF_Correction.Data;
 smooth_trajectory;                                                      %script per regolarizzazione
-q_ekf = x_hat_EKF_smoothed(1:2,1,:);
+x_ekf = x_hat_EKF_smoothed(:,1,:);
 
 %% alleggerimento simulazione
 %ricampionamento temporale a 0.033 per il modello
@@ -58,9 +58,9 @@ end
 q_pp_ekf  =  zeros(3,size(time_mod,2));
 for i  =  1 : size(time_mod,2)
     [d, i_ekf]  =  min(abs(tout-time_mod(i)));                          %abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
-    q_pp_ekf(1,i) = q_ekf(1,1,i_ekf);                                   %creo un vettore con tutte le q ad ogni istante
+    q_pp_ekf(1,i) = x_ekf(1,1,i_ekf);                                   %creo un vettore con tutte le q ad ogni istante
     q_pp_ekf(2,i) = z_ekf(i_ekf,1);
-    q_pp_ekf(3,i) = q_ekf(2,1,i_ekf);
+    q_pp_ekf(3,i) = x_ekf(2,1,i_ekf);
 end
 
 %ricampionamento temporale a dt_animazione per il filtro a particelle
@@ -223,7 +223,6 @@ end
 
 
 %% ---plot grafici--- %%
-%% plot regolarizzazione EKF
 
 %variabile creata a causa di un errore dato da matlab utilizzando la variabile tout
 % tempo = zeros(size(q_ekf,3),1);                     
@@ -232,157 +231,66 @@ end
 % end
 tempo = tout;
 
-%plot theta
-figure(2)
-hold on
-figure('color','white')
-grid on
-box on
-%axis equal
-xlabel('time [s]')
-ylabel('theta [rad]')
+% genero un vettore per ogni variabile di stato di modello e filtri (anche regolarizzazione)
+% in modo da passare ai plot vettori di dimensioni minori di 3 (altrimenti da errore)
+x_mod = zeros(size(x_ekf,3),1);
+x_EKF = zeros(size(x_ekf,3),1);
+x_EKF_smooth = zeros(size(x_ekf,3),1);
+x_PF = zeros(size(x_ekf,3),1);
 
-theta_mod = zeros(size(q_ekf,3),1);
-theta_EKF = zeros(size(q_ekf,3),1);
-theta_EKF_smooth = zeros(size(q_ekf,3),1);
-theta_PF = zeros(size(q_ekf,3),1);
-theta_d_EKF = zeros(size(q_ekf,3),1);
-theta_d_PF = zeros(size(q_ekf,3),1);
-for i = 1 : 1 : size(q_ekf,3)
+x_d_mod = zeros(size(x_ekf,3),1);
+x_d_EKF = zeros(size(x_ekf,3),1);
+x_d_EKF_smooth = zeros(size(x_ekf,3),1);
+x_d_PF = zeros(size(x_ekf,3),1);
+
+theta_mod = zeros(size(x_ekf,3),1);
+theta_EKF = zeros(size(x_ekf,3),1);
+theta_EKF_smooth = zeros(size(x_ekf,3),1);
+theta_PF = zeros(size(x_ekf,3),1);
+
+theta_d_mod = zeros(size(x_ekf,3),1);
+theta_d_EKF = zeros(size(x_ekf,3),1);
+theta_d_EKF_smooth = zeros(size(x_ekf,3),1);
+theta_d_PF = zeros(size(x_ekf,3),1);
+
+for i = 1 : 1 : size(x_ekf,3)
+    x_mod(i) = q_mod(1,1,i);
+    x_EKF(i) = funivia.x_hat_EKF_Correction.Data(1,1,i);
+    x_EKF_smooth(i) = x_ekf(1,1,i);
+    x_PF(i) = x_hat_part(1,1,i);
+
+    x_d_mod(i) = q_d_mod(1,1,i);
+    x_d_EKF(i)  = funivia.x_hat_EKF_Correction.Data(3,1,i);
+    x_d_EKF_smooth(i) = x_ekf(3,1,i);
+    x_d_PF(i) = x_hat_part(3,1,i);
+
     theta_mod(i) = q_mod(2,1,i);
     theta_EKF(i) = funivia.x_hat_EKF_Correction.Data(2,1,i);
-    theta_EKF_smooth(i) = q_ekf(2,1,i);
+    theta_EKF_smooth(i) = x_ekf(2,1,i);
     theta_PF(i) = x_hat_part(2,1,i);
+
+    theta_d_mod(i) = q_d_mod(2,1,i);
     theta_d_EKF(i)  = funivia.x_hat_EKF_Correction.Data(4,1,i);
+    theta_d_EKF_smooth(i) = x_ekf(4,1,i);
     theta_d_PF(i) = x_hat_part(4,1,i);
 end
 
-%plot in sovrapposizione di modello e filtri per theta
-ground_truth_tetha = ...
-    plot(tempo, theta_mod , 'm', 'LineWidth', 1.2);
-estimated_plot_tetha = ...
-    plot(tempo , theta_EKF ,'r--', 'LineWidth', 1.2);
-smoothed_plot_tetha = ...
-    plot(tempo, theta_EKF_smooth ,'b--', 'LineWidth', 1.2);
-estimated_plot_theta_PF = ...
-    plot(tempo , theta_PF ,'g--', 'LineWidth', 1.2);
-
-legend('mod','EKF','smooth_EKF','PF')
-hold off
-
-%plot x
-figure(3)
-hold on
-figure('color','white')
-grid on
-box on
-%axis equal
-ylabel('x [m]')
-xlabel('time [s]')
-
-x_mod = zeros(size(q_ekf,3),1);
-x_EKF = zeros(size(q_ekf,3),1);
-x_EKF_smooth = zeros(size(q_ekf,3),1);
-x_PF = zeros(size(q_ekf,3),1);
-x_d_EKF = zeros(size(q_ekf,3),1);
-x_d_PF = zeros(size(q_ekf,3),1);
-for i = 1 : 1 : size(q_ekf,3)
-    x_mod(i) = q_mod(1,1,i);
-    x_EKF(i) = funivia.x_hat_EKF_Correction.Data(1,1,i);
-    x_EKF_smooth(i) = q_ekf(1,1,i);
-    x_PF(i) = x_hat_part(1,1,i);
-    x_d_EKF(i)  = funivia.x_hat_EKF_Correction.Data(3,1,i);
-    x_d_PF(i) = x_hat_part(3,1,i);
-end
-
-%plot in sovrapposizione di modello e filtri per x
-ground_truth_x = ...
-    plot(tempo, x_mod , 'm', 'LineWidth', 1.2);
-estimated_plot_x = ...
-    plot(tempo, x_EKF,'r--', 'LineWidth', 1.2);
-smoothed_plot_x = ...
-    plot(tempo, x_EKF_smooth ,'b--', 'LineWidth', 1.2);
-estimated_plot_x_PF = ...
-    plot(tempo , x_PF ,'g--', 'LineWidth', 1.2);
-
-legend('mod','EKF','smooth_EKF','PF')
-hold off
-
-%% P
-Autov_P_cor = zeros(4,size(P_EKF_correction,3));
-Autov_P_pre = zeros(4,size(P_EKF_correction,3));
-Autov_P_smoothed = zeros(4,size(P_EKF_correction,3));
-for i = 1 : 1 : size(P_EKF_correction,3)
-    Autov_P_cor(:,i) = eig (P_EKF_correction(:,:,i));
-    Autov_P_pre(:,i) = eig (P_EKF_prediction(:,:,i));
-    Autov_P_smoothed(:,i) = eig (P_EKF_smoothed(:,:,i));
-end
-
-figure(4)
-hold on
-figure('color','white')
-grid on
-box on
-plot(Autov_P_cor(1,:),'--','LineWidth', 1.2)
-plot(Autov_P_pre(1,:),':','LineWidth', 1.2)
-%plot(Autov_P_smoothed(1,:),'-','LineWidth', 1.2)
-legend('correction','prediction','smoothed')
-hold off
-
-figure(5)
-hold on
-figure('color','white')
-grid on
-box on
-plot(Autov_P_cor(2,:),'--','LineWidth', 1.2)
-plot(Autov_P_pre(2,:),':','LineWidth', 1.2)
-%plot(Autov_P_smoothed(2,:),'-','LineWidth', 1.2)
-legend('correction','prediction','smoothed')
-hold off
-
-figure(6)
-hold on
-figure('color','white')
-grid on
-box on
-plot(Autov_P_cor(3,:),'--','LineWidth', 1.2)
-%plot(Autov_P_pre(3,:),':','LineWidth', 1.2)
-plot(Autov_P_smoothed(3,:),'-','LineWidth', 1.2)
-legend('correction','prediction','smoothed')
-hold off
-
-figure(7)
-hold on
-figure('color','white')
-grid on
-box on
-plot(Autov_P_cor(4,:),'--','LineWidth', 1.2)
-plot(Autov_P_pre(4,:),':','LineWidth', 1.2)
-%plot(Autov_P_smoothed(4,:),'-','LineWidth', 1.2)
-legend('correction','prediction','smoothed')
-hold off
-
 %% Plot grafici modello 
 
-figure(8)
-figure('color','white')
-
-
-for i = 1 : 1 : size(q_ekf,3)
-    x_d_mod(i) = q_d_mod(1,1,i);
-    theta_d_mod(i) = q_d_mod(2,1,i);
-end
+figure('color','white','WindowState','maximized')
 
 %creo i subplot
 subplot(2,2,1,'position',[0.05, 0.55, 0.42 ,0.4])
 hold on
 grid on
 box on
-plot(tempo, x_mod , 'b', 'LineWidth', 2)
-plot(tempo, x_EKF,'r', 'LineWidth', 1.2);
+plot(tempo, x_mod , 'k', 'LineWidth', 2.5)
+% plot(tempo, x_EKF,'r', 'LineWidth', 2)
+% plot(tempo, x_EKF_smooth ,'g-.', 'LineWidth',2 )
+plot(tempo, x_PF,'b', 'LineWidth', 2)
 ylabel('x [m]')
 xlabel('time [s]')
-legend('x','x-EKF')
+legend('x','x-PF') %'x-EKF','x-EKF-smooth',
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -390,11 +298,13 @@ subplot(2,2,2,'position',[0.55, 0.55, 0.42 ,0.4])
 hold on
 grid on
 box on
-plot(tempo, theta_mod , 'b', 'LineWidth', 2)
-plot(tempo, theta_EKF,'r', 'LineWidth', 1.2);
+plot(tempo, theta_mod , 'k', 'LineWidth', 2.5)
+% plot(tempo, theta_EKF,'r', 'LineWidth', 2)
+% plot(tempo, theta_EKF_smooth ,'g-.', 'LineWidth',2 )
+plot(tempo, theta_PF,'b', 'LineWidth', 2)
 ylabel('theta [m]')
 xlabel('time [s]')
-legend('theta','theta-EKF')
+legend('theta','theta-EKF') %'theta-EKF','theta-EKF-smooth',
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -402,11 +312,13 @@ subplot(2,2,3,'position',[0.05, 0.075, 0.42 ,0.4])
 hold on
 grid on
 box on
-plot(tempo, x_d_mod , 'b', 'LineWidth', 2)
-plot(tempo, x_d_EKF,'r', 'LineWidth', 1.2);
+plot(tempo, x_d_mod , 'k', 'LineWidth', 2.5)
+% plot(tempo, x_d_EKF,'r', 'LineWidth', 2)
+% plot(tempo, x_d_EKF_smooth ,'g-.', 'LineWidth',2 )
+plot(tempo, x_d_PF,'b', 'LineWidth', 2)
 ylabel('x_{dot} [m]')
 xlabel('time [s]')
-legend('x_{dot}','x_{dot}-EKF')
+legend('x_{dot}','x_{dot}-PF') %,'x_{dot}-EKF','x_{dot}-EKF-smooth'
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -414,11 +326,104 @@ subplot(2,2,4,'position',[0.55, 0.075, 0.42 ,0.4])
 hold on
 grid on
 box on
-plot(tempo, theta_d_mod , 'b', 'LineWidth', 2)
-plot(tempo, theta_d_EKF,'r', 'LineWidth', 1.2);
+plot(tempo, theta_d_mod , 'k', 'LineWidth', 2.5)
+% plot(tempo, theta_d_EKF,'r', 'LineWidth', 2)
+% plot(tempo, theta_d_EKF_smooth ,'g-.', 'LineWidth',2 )
+plot(tempo, theta_d_PF,'b', 'LineWidth', 2)
 ylabel('theta_{dot} [m]')
 xlabel('time [s]')
-legend('theta_{dot}','theta_{dot}-EKF')
+legend('theta_{dot}','theta_{dot}-PF') %,'theta_{dot}-EKF','theta_{dot}-EKF-smooth'
+set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
+
+%% plot regolarizzazione EKF
+
+%plot x
+figure('color','white','WindowState','maximized')
+hold on
+grid on
+box on
+plot(tempo, x_mod , 'b', 'LineWidth', 2)
+plot(tempo, x_EKF,'r', 'LineWidth', 2)
+plot(tempo, x_EKF_smooth ,'g-.', 'LineWidth',2 )
+ylabel('x [m]')
+xlabel('time [s]')
+legend('x','x-EKF','x-EKF-smooth')
+set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
+
+%plot theta
+figure('color','white','WindowState','maximized')
+hold on
+grid on
+box on
+plot(tempo, theta_mod , 'b', 'LineWidth', 2)
+plot(tempo, theta_EKF,'r', 'LineWidth', 2)
+plot(tempo, theta_EKF_smooth ,'g-.', 'LineWidth',2 )
+ylabel('theta [m]')
+xlabel('time [s]')
+legend('theta','theta-EKF','theta-EKF-smooth')
+set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
+
+%% plot errori
+
+figure('color','white','WindowState','maximized')
+
+%creo i subplot
+subplot(2,2,1,'position',[0.05, 0.55, 0.42 ,0.4])
+hold on
+grid on
+box on
+e_x_EKF = x_mod - x_EKF;
+plot(tempo, e_x_EKF,'r', 'LineWidth', 2)
+e_x_PF = x_mod - x_PF;
+plot(tempo, e_x_PF,'b', 'LineWidth', 2)
+ylabel('x [m]')
+xlabel('time [s]')
+legend('e-x-EKF','e-x-PF') %'x-EKF-smooth',
+set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
+
+subplot(2,2,2,'position',[0.55, 0.55, 0.42 ,0.4])
+hold on
+grid on
+box on
+e_theta_EKF = theta_mod - theta_EKF;
+plot(tempo, e_theta_EKF,'r', 'LineWidth', 2)
+e_theta_PF = theta_mod - theta_PF;
+plot(tempo, e_theta_PF,'b', 'LineWidth', 2)
+ylabel('theta [m]')
+xlabel('time [s]')
+legend('e-theta-EKF','e-theta-PF') %'theta-EKF-smooth',
+set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
+
+subplot(2,2,3,'position',[0.05, 0.075, 0.42 ,0.4])
+hold on
+grid on
+box on
+e_x_d_EKF = x_d_mod - x_d_EKF;
+plot(tempo, e_x_d_EKF,'r', 'LineWidth', 2)
+e_x_d_PF = x_d_mod - x_d_PF;
+plot(tempo, e_x_d_PF,'b', 'LineWidth', 2)
+ylabel('x_{dot} [m]')
+xlabel('time [s]')
+legend('e-x_{dot}-EKF','e-x_{dot}-PF') %,'x_{dot}-EKF-smooth'
+set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
+hold off
+
+subplot(2,2,4,'position',[0.55, 0.075, 0.42 ,0.4])
+hold on
+grid on
+box on
+e_theta_d_EKF = theta_d_mod - theta_d_EKF;
+plot(tempo, e_theta_d_EKF,'r', 'LineWidth', 2)
+e_theta_d_PF = theta_d_mod - theta_d_PF;
+plot(tempo, e_theta_d_PF,'b', 'LineWidth', 2)
+ylabel('theta_{dot} [m]')
+xlabel('time [s]')
+legend('e-theta_{dot}-EKF','e-theta_{dot}-PF') %,'theta_{dot}-EKF-smooth'
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 

@@ -45,7 +45,7 @@ sensor.d2.seed = 45;                            %seed per generare i soliti rumo
 
 %% Caratteristiche dell'ingresso
 % ingresso Fext
-Fext.mean_value = 500;                          %[N]
+Fext.mean_value = 1000;                          %[N]
 Fext.std_dev = sqrt(1000*0.05/3);               %[N]
 Fext.seed = 71;                                 %seed per generare i soliti rumori
 
@@ -82,7 +82,7 @@ P0 = [init.q_std_dev(1,1)^2 0 0 0;...                           %uso la deviazio
       0 0 init.q_d_std_dev(1,1)^2 0;...
       0 0 0 init.q_d_std_dev(2,2)^2];
 % PF
-N = 200;                                       %numero particelle per PF
+N = 1000;                                       %numero particelle per PF
 particles0 = mvnrnd (x0_hat, P0, N);            %genero le particelle
 weights0 = 1/N*ones(N,1);                       %inizializzo i pesi
 
