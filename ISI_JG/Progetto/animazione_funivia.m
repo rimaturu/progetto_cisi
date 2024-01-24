@@ -27,6 +27,7 @@ end
 %%
 %passo i dati dalla struttura creata in precedenza a delle variabili
 q_mod = funivia.q.Data;
+q_d_mod = funivia.q_d.Data;
 x_hat_ekf = funivia.x_hat_EKF_Correction.Data;
 x_hat_part = funivia.x_hat_PF_Correction.Data;
 z_mod = funivia.z_mod.Data;
@@ -224,6 +225,12 @@ end
 %% ---plot grafici--- %%
 %% plot regolarizzazione EKF
 
+%variabile creata a causa di un errore dato da matlab utilizzando la variabile tout
+tempo = zeros(size(q_ekf,3),1);                     
+for i = 1 : 1 : size(q_ekf,3)
+    tempo(i) = tout(i);
+end
+
 %plot theta
 figure(2)
 hold on
@@ -232,12 +239,6 @@ box on
 %axis equal
 xlabel('time [s]')
 ylabel('theta [rad]')
-
-%variabile creata a causa di un errore dato da matlab utilizzando la variabile tout
-tempo = zeros(size(q_ekf,3),1);                     
-for i = 1 : 1 : size(q_ekf,3)
-    tempo(i) = tout(i);
-end
 
 theta_mod = zeros(size(q_ekf,3),1);
 theta_EKF = zeros(size(q_ekf,3),1);
