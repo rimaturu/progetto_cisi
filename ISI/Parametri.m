@@ -15,12 +15,12 @@ g = 9.81;
 
 params = [m, c_a, J, L, l, h, r, g];
 params_incert = [m + normrnd(400, 100), c_a - normrnd(1, 0.2), J + normrnd(500, 50), L, l, h, r, g];
-params_incert = params;
+% params_incert = params;
 
 % Condizioni Iniziali %
-F_0 = 400;
+F_0 = 1500;
 dq_0 = [0; 0];
-q_0 = [0; -pi/2];
+q_0 = [0; -pi/6];
 
 
 %% parametri sensori
