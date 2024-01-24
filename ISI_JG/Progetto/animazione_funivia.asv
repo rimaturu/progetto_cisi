@@ -30,10 +30,11 @@ x_hat_ekf = funivia.x_hat_EKF_Correction.Data;
 x_hat_part = funivia.x_hat_PF_Correction.Data;
 q_mod = funivia.q.Data(:,:,1:size(x_hat_ekf,3));
 q_d_mod = funivia.q_d.Data(:,:,1:size(x_hat_ekf,3));
+tout = t
 z_mod = funivia.z_mod.Data;
 z_ekf = funivia.z_EKF.Data;
 z_part = funivia.z_PF.Data;
-tout = funivia.tout(1:size(x_hat_ekf,3),1);
+tout = funivia.tout;
 
 %% Regolarizzazione
 %i passaggi nelle delle variabili servono a far funzionare il codice nel
