@@ -3,14 +3,19 @@ close all
 clear all
 
 
-%avvio lo script di inizializzazione
+% avvio lo script di inizializzazione
 inizializzazione;
-T_simulazione = 30;
-funivia = sim("Nominal_model.slx");                                     %creo struttura con tutti gli out dati da simulink
-%funivia = sim("Real_model.slx");                                       %creo struttura con tutti gli out dati da simulink
-
+% selezioni della simulazione
 plot_dinamico = false;
-%prendo i parametri dallo script di inizializzazione
+real_simulation = true;
+T_simulazione = 100;
+if real_simulation
+    funivia = sim("Real_model.slx");                                       %creo struttura con tutti gli out dati da simulink
+else
+    funivia = sim("Nominal_model.slx");                                     %creo struttura con tutti gli out dati da simulink
+end
+
+% prendo i parametri dallo script di inizializzazione
 h = param.h;
 L = param.L;
 l = param.l;
@@ -18,7 +23,7 @@ r = param.r;
 lenght_cabin = param.length_cabin;
 high_cabin = param.High_cabin;
 
-%creazione figura
+% creazione figura
 if(plot_dinamico)
      f = figure;
      f.WindowState = 'maximized';                                       %metto figura a schermo intero
@@ -285,12 +290,12 @@ hold on
 grid on
 box on
 plot(tempo, x_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, x_EKF,'r', 'LineWidth', 2)
+plot(tempo, x_EKF,'r', 'LineWidth', 2)
 % plot(tempo, x_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, x_PF,'b', 'LineWidth', 2)
 ylabel('x [m]')
 xlabel('time [s]')
-legend('x','x-PF') %'x-EKF','x-EKF-smooth',
+legend('x','x-EKF','x-PF') %'x-EKF-smooth',
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -299,12 +304,12 @@ hold on
 grid on
 box on
 plot(tempo, theta_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, theta_EKF,'r', 'LineWidth', 2)
+plot(tempo, theta_EKF,'r', 'LineWidth', 2)
 % plot(tempo, theta_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, theta_PF,'b', 'LineWidth', 2)
 ylabel('theta [m]')
 xlabel('time [s]')
-legend('theta','theta-EKF') %'theta-EKF','theta-EKF-smooth',
+legend('theta','theta-EKF','theta-PF') %'theta-EKF-smooth',
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -313,12 +318,12 @@ hold on
 grid on
 box on
 plot(tempo, x_d_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, x_d_EKF,'r', 'LineWidth', 2)
+plot(tempo, x_d_EKF,'r', 'LineWidth', 2)
 % plot(tempo, x_d_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, x_d_PF,'b', 'LineWidth', 2)
 ylabel('x_{dot} [m]')
 xlabel('time [s]')
-legend('x_{dot}','x_{dot}-PF') %,'x_{dot}-EKF','x_{dot}-EKF-smooth'
+legend('x_{dot}','x_{dot}-EKF','x_{dot}-PF') %,'x_{dot}-EKF-smooth'
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -327,12 +332,12 @@ hold on
 grid on
 box on
 plot(tempo, theta_d_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, theta_d_EKF,'r', 'LineWidth', 2)
+plot(tempo, theta_d_EKF,'r', 'LineWidth', 2)
 % plot(tempo, theta_d_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, theta_d_PF,'b', 'LineWidth', 2)
 ylabel('theta_{dot} [m]')
 xlabel('time [s]')
-legend('theta_{dot}','theta_{dot}-PF') %,'theta_{dot}-EKF','theta_{dot}-EKF-smooth'
+legend('theta_{dot}','theta_{dot}-EKF','theta_{dot}-PF') %,'theta_{dot}-EKF-smooth'
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 

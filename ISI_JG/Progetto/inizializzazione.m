@@ -22,30 +22,30 @@ param_real.J = param.J + var*(param.l+param.r)^2;   %[kg*m^2]   %momento di iner
 param_real.Ca = param.Ca + randn*3;                 %[N*s/m]    %coefficiente di attrito viscoso
 
 % Costanti
-param.g = 9.81;                                 %[m/s^2]    %accellerazione gravitazionale
+param.g = 9.81;                                     %[m/s^2]    %accellerazione gravitazionale
 
 %% Caratteristiche dei sensori
 % sensore Dc (radio)
-sensor.Dc.freq = 10;                           %[Hz]
-precisione_Dc = 5;                              %[m] 
+sensor.Dc.freq = 50;                            %[Hz]
+precisione_Dc = 1;                              %[m] 
 sensor.Dc.std_dev = sqrt(precisione_Dc/3);      %[m]        %std_dev=precisone/3
 sensor.Dc.seed = 19;                            %seed per generare i soliti rumori
 
 % sensore encoder
 sensor.omega.freq = 1000;                       %[Hz]
-precisione_omega = 3;                           %[rad/s]
+precisione_omega = 1;                           %[rad/s]
 sensor.omega.std_dev = sqrt(precisione_omega/3);%[rad/s]    %std_dev=precisone/3
 sensor.omega.seed = 255;                        %seed per generare i soliti rumori
 
 % sensore d2
 sensor.d2.freq = 1000;                          %[Hz]
-precisione_d2 = 0.5;                            %[m]
+precisione_d2 = 0.1;                            %[m]
 sensor.d2.std_dev = sqrt(precisione_d2/3);      %[m]        %std_dev=precisone/3
 sensor.d2.seed = 45;                            %seed per generare i soliti rumori
 
 %% Caratteristiche dell'ingresso
 % ingresso Fext
-Fext.mean_value = 1000;                          %[N]
+Fext.mean_value = 400;                         %[N]
 Fext.std_dev = sqrt(1000*0.05/3);               %[N]
 Fext.seed = 71;                                 %seed per generare i soliti rumori
 
@@ -82,7 +82,7 @@ P0 = [init.q_std_dev(1,1)^2 0 0 0;...                           %uso la deviazio
       0 0 init.q_d_std_dev(1,1)^2 0;...
       0 0 0 init.q_d_std_dev(2,2)^2];
 % PF
-N = 1000;                                       %numero particelle per PF
+N = 5000;                                       %numero particelle per PF
 particles0 = mvnrnd (x0_hat, P0, N);            %genero le particelle
 weights0 = 1/N*ones(N,1);                       %inizializzo i pesi
 
@@ -109,5 +109,5 @@ dT_max = 1/f_min;                               %Periodo utilizzato per la corre
 dT = 1/f_max;                                   %Perido dei filtri di kalman
 
 %% Caratteristiche della simulazione
-T_simulazione = 10;                            %tempo di simulazione
+T_simulazione = 30;                            %tempo di simulazione
 
