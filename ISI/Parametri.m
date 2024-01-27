@@ -63,6 +63,6 @@ q_hat_0 = [ dq_0(1) + normrnd(0, 0.1);
             q_0(2) + normrnd(0, pi/100)];
 
 
-% Faccio partire la simulazione su Simulink
+%% Faccio partire la simulazione su Simulink
 simulazione = sim("SistemaFunivia.slx");
 
