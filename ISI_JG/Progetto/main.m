@@ -4,19 +4,19 @@ clear all
 
 
 % avvio lo script di inizializzazione
-inizializzazione;
+inizializzazione;                                                          % all'interno vengono inizializate tutte le variabili del problema
 % selezioni della simulazione
 plot_dinamico = false;
-real_simulation = false;
+real_simulation = true;
 T_simulazione = 10;
 
-tic                                                                         %inizio conteggio del tempo per vedere la pesantezza della simulazione
+tic                                                                        % conteggio del tempo per vedere la pesantezza della simulazione
 if real_simulation
-    funivia = sim("Real_model.slx");                                        %creo struttura con tutti gli out dati da simulink
+    funivia = sim("Real_model.slx");                                       % creo struttura con tutti gli out dati da simulink
 else
-    funivia = sim("Nominal_model.slx");                                     %creo struttura con tutti gli out dati da simulink
+    funivia = sim("Nominal_model.slx");                                    % creo struttura con tutti gli out dati da simulink
 end
-toc                                                                         %fine conteggio tempo 
+toc                                                                        % fine conteggio tempo 
 
 % prendo i parametri dallo script di inizializzazione
 h = param.h;
@@ -29,7 +29,7 @@ high_cabin = param.High_cabin;
 % creazione figura
 if(plot_dinamico)
      f = figure;
-     f.WindowState = 'maximized';                                       %metto figura a schermo intero
+     f.WindowState = 'maximized';                                          % metto figura a schermo intero
 end
 
 %%
@@ -47,7 +47,7 @@ tout = funivia.tout(1:size(x_hat_ekf,3),1);
 %i passaggi nelle delle variabili servono a far funzionare il codice nel
 %caso che si commenti la regolarizzazione
 x_hat_EKF_smoothed = funivia.x_hat_EKF_Correction.Data;
-smooth_trajectory;                                                      %script per regolarizzazione
+smooth_trajectory;                                                         % script per regolarizzazione
 x_ekf = x_hat_EKF_smoothed(:,1,:);
 
 %% alleggerimento simulazione
@@ -55,8 +55,8 @@ x_ekf = x_hat_EKF_smoothed(:,1,:);
 time_mod  =  0 : 0.03 : tout(end);
 q_pp_mod  =  zeros(3,size(time_mod,2));
 for i  =  1 : size(time_mod,2)
-    [d, ix_mod]  =  min(abs(tout-time_mod(i)));                         %abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
-    q_pp_mod(1,i) = q_mod(1,1,ix_mod);                                  %creo un vettore con tutte le q ad ogni istante
+    [d, ix_mod]  =  min(abs(tout-time_mod(i)));                            % abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
+    q_pp_mod(1,i) = q_mod(1,1,ix_mod);                                     % creo un vettore con tutte le q ad ogni istante
     q_pp_mod(2,i) = z_mod(ix_mod,1);
     q_pp_mod(3,i) = q_mod(2,1,ix_mod);
 end
@@ -64,19 +64,21 @@ end
 %ricampionamento temporale a dt_animazione per l'ekf
 %time_mod  =  0 : 0.033 : tout(end);
 q_pp_ekf  =  zeros(3,size(time_mod,2));
+P_EKF_C = zeros(4,4,size(time_mod,2));
 for i  =  1 : size(time_mod,2)
-    [d, i_ekf]  =  min(abs(tout-time_mod(i)));                          %abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
-    q_pp_ekf(1,i) = x_ekf(1,1,i_ekf);                                   %creo un vettore con tutte le q ad ogni istante
+    [d, i_ekf]  =  min(abs(tout-time_mod(i)));                          % abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
+    q_pp_ekf(1,i) = x_ekf(1,1,i_ekf);                                   % creo un vettore con tutte le q ad ogni istante
     q_pp_ekf(2,i) = z_ekf(i_ekf,1);
     q_pp_ekf(3,i) = x_ekf(2,1,i_ekf);
+    P_EKF_C(:,:,i) = P_EKF_correction(:,:,i_ekf);
 end
 
 %ricampionamento temporale a dt_animazione per il filtro a particelle
 %time_mod  =  0 : 0.033 : tout(end);
 q_pp_part  =  zeros(3,size(time_mod,2));
 for i  =  1 : size(time_mod,2)
-    [d, i_part]  =  min(abs(tout-time_mod(i)));                        %abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
-    q_pp_part(1,i) = x_hat_part(1,1,i_part);                                %creo un vettore con tutte le q ad ogni istante
+    [d, i_part]  =  min(abs(tout-time_mod(i)));                            % abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
+    q_pp_part(1,i) = x_hat_part(1,1,i_part);                               % creo un vettore con tutte le q ad ogni istante
     q_pp_part(2,i) = z_part(i_part,1);
     q_pp_part(3,i) = x_hat_part(2,1,i_part);
 end
@@ -94,14 +96,14 @@ end
 
 if plot_dinamico
     for i = 1 : 1 : size(q_pp_mod,2)
-        cla;                                                                %cancella il tutto ciò che è disegnato nell'immagine
+        cla;                                                               % cancella il tutto ciò che è disegnato nell'immagine
     
         %--cerco i punti utili per il disegno del modello--%
     
-        trasl_mod = (q_pp_mod(2,i) - (l+r)*cos(q_pp_mod(3,i))) - (L-l-r);   %mi sevre per bloccare il cavo portante e traslare il resto di conseguenza
+        trasl_mod = (q_pp_mod(2,i) - (l+r)*cos(q_pp_mod(3,i))) - (L-l-r);  % mi sevre per bloccare il cavo portante e traslare il resto di conseguenza
         %trovo vertice in basso a sinistra della cabina
         rect_x_mod = q_pp_mod(1,i) + (h-high_cabin/2)*sin(q_pp_mod(3,i)) -...
-            lenght_cabin/2;                                                 %ATTENZIONE: il rettangolo rimane orizzontale
+            lenght_cabin/2;                                                
         rect_z_mod = -(q_pp_mod(2,i) + (h-high_cabin/2)*cos(q_pp_mod(3,i)) +...
             high_cabin) + trasl_mod;
     
@@ -115,7 +117,7 @@ if plot_dinamico
         z_asta_high_mod = trasl_mod;
     
         %trovo il centro della puleggia
-        x_puleggia_mod = q_pp_mod(1,i) - (l+r)*sin(q_pp_mod(3,i));                                                      %visto che il comando rectangle disegna partendo dal vertice in basso a sinista devo togliere il raggio per centrarla
+        x_puleggia_mod = q_pp_mod(1,i) - (l+r)*sin(q_pp_mod(3,i));         % visto che il comando rectangle disegna partendo dal vertice in basso a sinista devo togliere il raggio per centrarla
         z_puleggia_mod = - (L-l-r) ;
     
     
@@ -127,7 +129,7 @@ if plot_dinamico
         trasl_ekf = (q_pp_ekf(2,i) - (l+r)*cos(q_pp_ekf(3,i))) - (L-l-r);                                               %traslazione utile a far stare ffermo il cavo "portante" e muovere quello "di spinta"
         %trovo vertice in basso a sinistra della cabina
         rect_x_ekf = q_pp_ekf(1,i) + (h-high_cabin/2)*sin(q_pp_ekf(3,i))...
-            - lenght_cabin/2;                                               %ATTENZIONE: il rettangolo rimane orizzontale
+            - lenght_cabin/2;                                               
         rect_z_ekf = -(q_pp_ekf(2,i) + (h-high_cabin/2)*cos(q_pp_ekf(3,i))...
             + high_cabin) + trasl_ekf;
     
@@ -141,7 +143,7 @@ if plot_dinamico
         z_asta_high_ekf = trasl_ekf;
     
         %trovo il centro della puleggia
-        x_puleggia_ekf = q_pp_ekf(1,i) - (l+r)*sin(q_pp_ekf(3,i));                                                      %visto che il comando rectangle disegna partendo dal vertice in basso a sinista devo togliere il raggio per centrarla
+        x_puleggia_ekf = q_pp_ekf(1,i) - (l+r)*sin(q_pp_ekf(3,i));         % visto che il comando rectangle disegna partendo dal vertice in basso a sinista devo togliere il raggio per centrarla
         z_puleggia_ekf = - (L-l-r); 
     
     
@@ -153,7 +155,7 @@ if plot_dinamico
         trasl_part = (q_pp_part(2,i) - (l+r)*cos(q_pp_part(3,i))) - (L-l-r);
         %trovo vertice in basso a sinistra della cabina
         rect_x_part = q_pp_part(1,i) + (h-high_cabin/2)*sin(q_pp_part(3,i))...
-            - lenght_cabin/2;                                               %ATTENZIONE: il rettangolo rimane orizzontale
+            - lenght_cabin/2;                                               
         rect_z_part = -(q_pp_part(2,i) + (h-high_cabin/2)*cos(q_pp_part(3,i))...
             + high_cabin) + trasl_part;
 
@@ -167,7 +169,7 @@ if plot_dinamico
         z_asta_high_part = trasl_part;
 
         %trovo il centro della puleggia
-        x_puleggia_part = q_pp_part(1,i) - (l+r)*sin(q_pp_part(3,i));                                                   %visto che il comando rectangle disegna partendo dal vertice in basso a sinista devo togliere il raggio per centrarla
+        x_puleggia_part = q_pp_part(1,i) - (l+r)*sin(q_pp_part(3,i));      % visto che il comando rectangle disegna partendo dal vertice in basso a sinista devo togliere il raggio per centrarla
         z_puleggia_part = - (L-l-r);
     
     
@@ -184,31 +186,31 @@ if plot_dinamico
             'green');                         %filtro a particelle
         % asta
         R_r_mod(2) = line([x_asta_high_mod x_asta_low_mod],...
-            [z_asta_high_mod z_asta_low_mod], 'color', 'black');                                %modello
+            [z_asta_high_mod z_asta_low_mod], 'color', 'black');           % modello
         R_r_ekf(2) = line([x_asta_high_ekf x_asta_low_ekf],...
-            [z_asta_high_ekf z_asta_low_ekf], 'color', 'blue');                                 %ekf
+            [z_asta_high_ekf z_asta_low_ekf], 'color', 'blue');            % ekf
         R_r_part(2) = line([x_asta_high_part x_asta_low_part],...
-            [z_asta_high_part z_asta_low_part], 'color', 'green');                           %filtro a particelle
+            [z_asta_high_part z_asta_low_part], 'color', 'green');         % filtro a particelle
         %centro di massa
         R_r_mod(3) = rectangle('Position',...
             [q_pp_mod(1,i)-0.05 -q_pp_mod(2,i)-0.05+trasl_mod 0.1 0.1],...
-            'Curvature', [1,1],'EdgeColor', 'black');                       %modello
+            'Curvature', [1,1],'EdgeColor', 'black');                      % modello
         R_r_ekf(3) = rectangle('Position',...
             [q_pp_ekf(1,i)-0.05 -q_pp_ekf(2,i)-0.05+trasl_ekf 0.1 0.1],...
-            'Curvature', [1,1],'EdgeColor', 'blue');                        %ekf
+            'Curvature', [1,1],'EdgeColor', 'blue');                       % ekf
         R_r_part(3) = rectangle('Position',...
             [q_pp_part(1,i)-0.05 -q_pp_part(2,i)-0.05+trasl_part 0.1 0.1],...
-            'Curvature', [1,1],'EdgeColor', 'green');                       %filtro a particelle
+            'Curvature', [1,1],'EdgeColor', 'green');                      % filtro a particelle
         %puleggia
         R_r_mod(4) = rectangle('Position',...
             [x_puleggia_mod-r z_puleggia_mod-r 2*r 2*r], 'curvature',...
-            [1,1],'EdgeColor', 'black');                                    %modello
+            [1,1],'EdgeColor', 'black');                                   % modello
         R_r_ekf(4) = rectangle('Position',...
             [x_puleggia_ekf-r z_puleggia_ekf-r 2*r 2*r], 'curvature',...
-            [1,1],'EdgeColor', 'blue');                    %ekf
+            [1,1],'EdgeColor', 'blue');                                    % ekf
         R_r_part(4) = rectangle('Position',...
             [x_puleggia_part-r z_puleggia_part-r 2*r 2*r], 'curvature',...
-            [1,1],'EdgeColor', 'green');                                    %filtro a particelle
+            [1,1],'EdgeColor', 'green');                                   % filtro a particelle
     
         %cavi (traslano con la cabina)
         line([x_asta_high_mod - 10, x_asta_high_mod + 40],...
@@ -293,12 +295,12 @@ hold on
 grid on
 box on
 plot(tempo, x_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, x_EKF,'r', 'LineWidth', 2)
+plot(tempo, x_EKF,'r', 'LineWidth', 2)
 % plot(tempo, x_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, x_PF,'b', 'LineWidth', 2)
 ylabel('x [m]')
 xlabel('time [s]')
-legend('x','x-PF') %'x-EKF','x-EKF-smooth')
+legend('x','x-EKF','x-PF') %'x-EKF-smooth')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -307,12 +309,12 @@ hold on
 grid on
 box on
 plot(tempo, theta_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, theta_EKF,'r', 'LineWidth', 2)
+plot(tempo, theta_EKF,'r', 'LineWidth', 2)
 % plot(tempo, theta_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, theta_PF,'b', 'LineWidth', 2)
 ylabel('theta [rad]')
 xlabel('time [s]')
-legend('theta','theta-PF') %,'theta-EKF','theta-EKF-smooth')
+legend('theta','theta-EKF','theta-PF') %,'theta-EKF-smooth')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -321,12 +323,12 @@ hold on
 grid on
 box on
 plot(tempo, x_d_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, x_d_EKF,'r', 'LineWidth', 2)
+plot(tempo, x_d_EKF,'r', 'LineWidth', 2)
 % plot(tempo, x_d_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, x_d_PF,'b', 'LineWidth', 2)
 ylabel('x_{dot} [m/s]')
 xlabel('time [s]')
-legend('x_{dot}','x_{dot}-PF') %,'x_{dot}-EKF','x_{dot}-EKF-smooth')
+legend('x_{dot}','x_{dot}-EKF','x_{dot}-PF') %,'x_{dot}-EKF-smooth')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
@@ -335,12 +337,12 @@ hold on
 grid on
 box on
 plot(tempo, theta_d_mod , 'k', 'LineWidth', 2.5)
-% plot(tempo, theta_d_EKF,'r', 'LineWidth', 2)
+plot(tempo, theta_d_EKF,'r', 'LineWidth', 2)
 % plot(tempo, theta_d_EKF_smooth ,'g-.', 'LineWidth',2 )
 plot(tempo, theta_d_PF,'b', 'LineWidth', 2)
 ylabel('theta_{dot} [rad/s]')
 xlabel('time [s]')
-legend('theta_{dot}','theta_{dot}-PF') %,'theta_{dot}-EKF','theta_{dot}-EKF-smooth')
+legend('theta_{dot}','theta_{dot}-EKF','theta_{dot}-PF') %,'theta_{dot}-EKF-smooth')
 set(gca, 'FontSize', 14);  % Imposta la grandezza del font per l'asse corrente
 hold off
 
