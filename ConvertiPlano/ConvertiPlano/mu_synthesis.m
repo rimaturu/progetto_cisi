@@ -65,17 +65,17 @@ reldiff2 = (Gm2_p-Gm2_n)/Gm2_n;
 Wi1 = 0.003*5*10^4*(s+0.03)/(s+15)^2;
 Wi2 = 0.012*10^4*(s+0.03)/(s+15)^2;
 
-figure(1)
-hold on
-grid on
-bodemag(reldiff1,Wi1)
-hold off
-
-figure(2)
-hold on
-grid on
-bodemag(reldiff2,Wi2)
-hold off
+% figure(1)
+% hold on
+% grid on
+% bodemag(reldiff1,Wi1)
+% hold off
+% 
+% figure(2)
+% hold on
+% grid on
+% bodemag(reldiff2,Wi2)
+% hold off
 
 % creo la upper lft degli attuatori
 

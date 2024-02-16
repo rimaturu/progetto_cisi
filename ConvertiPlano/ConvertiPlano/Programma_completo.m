@@ -14,12 +14,12 @@ g = 9.81;
 params_plano = [J, m, b, beta, l, g];
 
 % Definizione parametri attuatori %
-Km1 = 111;
-Km2 = 222;
-T1 = 333;
-T2 = 12;
-Tm1 = 332;
-Tm2 = 123;
+Km1 = 500;
+Km2 = 100;
+T1 = 0.5;
+T2 = 0.5;
+Tm1 = 5;
+Tm2 = 5;
 
 params_attuatori = [Km1, Km2, T1, T2, Tm1, Tm2];
 
@@ -27,7 +27,7 @@ params_attuatori = [Km1, Km2, T1, T2, Tm1, Tm2];
 F_0 = [0; 0];
 
 dq_0 = [0; 0];
-q_0 = [0; -pi/2];
+q_0 = [0; 0];
 
 
 %% Filtro EKF %%
@@ -44,12 +44,12 @@ Q = blkdiag(dev_std_fm ^ 2, dev_std_fa ^ 2);
 R = blkdiag(dev_std_z ^ 2, dev_std_theta ^ 2);
 
 dt = 0.02;
-t_max = 15;
+t_EKF = 15;
 
 k = 0;
 x_EKF = x_hat;
 
-for t = dt:dt:t_max
+for t = dt:dt:t_EKF
     
     k = k + 1;
     
