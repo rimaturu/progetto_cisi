@@ -14,6 +14,7 @@ L = param.L;
 for i  =  1 : (size(x_hat_EKF_correction,3))
     z_ekf(i,1) = L*cos(x_hat_EKF_smoothed(2,1,i));
 end
+
 %% Funzione di Regolarizzazione
 function [x_hat_smoothed, P_smoothed] = Smoothing (x_hat_correction,x_hat_prediction,P_correction,P_prediction,F)
 

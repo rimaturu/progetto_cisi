@@ -66,8 +66,8 @@ end
 q_pp_ekf  =  zeros(3,size(time_mod,2));
 P_EKF_C = zeros(4,4,size(time_mod,2));
 for i  =  1 : size(time_mod,2)
-    [d, i_ekf]  =  min(abs(tout-time_mod(i)));                          % abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
-    q_pp_ekf(1,i) = x_ekf(1,1,i_ekf);                                   % creo un vettore con tutte le q ad ogni istante
+    [d, i_ekf]  =  min(abs(tout-time_mod(i)));                             % abs restituisce il valore assoluto di ogni elemento del vettore al suo interno
+    q_pp_ekf(1,i) = x_ekf(1,1,i_ekf);                                      % creo un vettore con tutte le q ad ogni istante
     q_pp_ekf(2,i) = z_ekf(i_ekf,1);
     q_pp_ekf(3,i) = x_ekf(2,1,i_ekf);
     P_EKF_C(:,:,i) = P_EKF_correction(:,:,i_ekf);
