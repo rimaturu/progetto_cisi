@@ -93,7 +93,6 @@ T = eye(2) - S;
 % 
 % bodemag(T(2,2),1/wT)
 
-step(T(1,1))
 
 %% controllo H-inf
 
