@@ -90,10 +90,10 @@ Delta_att = [Delta_att1 0; 0 Delta_att2];
 
 %% definisco il peso Wp di prestazione
 A1=1e-4;
-M1=2;
+M1=1.001;
 wB1=0.3;
 A2=1e-4;
-M2=2;
+M2=1.001;
 wB2=0.5;
 wP1=makeweight(1/A1,wB1,1/M2);
 wP2=makeweight(1/A2,wB2,1/M2);
@@ -126,14 +126,13 @@ Sum6 = sumblk ('u_G_P2 = y_P_att2');
 
 P = connect (G_P,P_att,WP,Sum1,Sum2,Sum3,Sum4,Sum5,Sum6,{'ud1','ud2','uD1','uD2','w1','w2','u1','u2'},{'yd1','yd2','yD1','yD2','z1','z2','e1','e2'});
 
-Delta = [ Delta_att,  zeros(2) ; zeros(2) , Delta_G];
+Delta = [ Delta_att,  zeros(2), zeros(2)  ; zeros(2) , Delta_G, zeros(2)];
 
 P_dist = lft(Delta,P);
 
-[K_DK,CLperf,info] = musyn(P_dist,2,2);
+[K,CLperf,info] = musyn(P_dist,2,2);
 
-K_DK = minreal(zpk(tf(K_DK)),1e-1);
+K = minreal(zpk(tf(K)),1e-2);
 
-K_DK = [K_DK(1,1) 0; 0 K_DK(2,2)];
 
-bodemag(K_DK)
+

@@ -5,25 +5,21 @@ clc
 
 %% paramtri sistema
 % Definizione parametri convertiplano %
-J = 5000;
-m = 2000;
-b = 150;
-beta = 15;
-l = 10;
+params_plano.J = 5000;
+params_plano.m = 2000;
+params_plano.b = 150;
+params_plano.beta = 15;
+params_plano.l = 10;
 
-g = 9.81;
-
-params_plano = [J, m, b, beta, l, g];
+params_plano.g = 9.81;
 
 % Definizione parametri attuatori %
-Km1 = 500;
-Km2 = 100;
-T1 = 0.5;
-T2 = 0.5;
-Tm1 = 5;
-Tm2 = 5;
-
-params_attuatori = [Km1, Km2, T1, T2, Tm1, Tm2];
+params_attuatori.Km1 = 1000;
+params_attuatori.Km2 = 100;
+params_attuatori.T1 = 0.5;
+params_attuatori.T2 = 0.5;
+params_attuatori.Tm1 = 10;
+params_attuatori.Tm2 = 10;
 
 
 %% Definisco il sistema linearizzato nel PE
@@ -37,7 +33,7 @@ A = [0 1 0 0; ...
 B = [0 0; ...
      1 0; ...
      0 0; ...
-     0 2*l];
+     0 2*params_plano.l];
 
 C = [1 0 0 0; ...
      0 0 1 0];
@@ -53,8 +49,8 @@ G_n = zpk(sys_n);
 %% Definisco le fdt degli attuatori nominali (senza tempo di ritardo)
 s = tf('s');
 
-Gm1_n = Km1/(Tm1*s+1);
-Gm2_n = Km2/(Tm2*s+1);
+Gm1_n = params_attuatori.Km1/(params_attuatori.Tm1*s+1);
+Gm2_n = params_attuatori.Km2/(params_attuatori.Tm2*s+1);
 
 G_attuators_n = [Gm1_n, 0; 0, Gm2_n];
 
@@ -132,5 +128,6 @@ P_hinf = connect(G_tot_n,WP,WT,WU,Sum1,Sum2,Sum3,Sum4,{'w1','w2','uG1','uG2'},{'
 K_hinf = minreal(zpk(tf(K_hinf)),1e-1);
 
 K_hinf = [K_hinf(1,1) 0; 0 K_hinf(2,2)];
+
 
 
