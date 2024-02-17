@@ -1,7 +1,7 @@
 %% mu-synthesis
-clear
-close all
-clc
+% clear
+% close all
+% clc
 
 %% paramtri sistema
 % Definizione parametri convertiplano %
@@ -13,7 +13,7 @@ l = 10;
 
 g = 9.81;
 
-params_plano = [J, m, b, beta, l, g];
+%params_plano = [J, m, b, beta, l, g];
 
 % Definizione parametri attuatori %
 Km1 = 500;
@@ -25,7 +25,7 @@ T2 = 0.5;
 Tm1 = 5;
 Tm2 = 5;
 
-params_attuatori = [Km1, Km2, T1, T2, Tm1, Tm2];
+%params_attuatori = [Km1, Km2, T1, T2, Tm1, Tm2];
 
 %% Definisco il sistema linearizzato nel PE
 % PE = (0,0,0,0)  %(x,x_d,theta,theta_d)
@@ -99,12 +99,6 @@ wP1=makeweight(1/A1,wB1,1/M2);
 wP2=makeweight(1/A2,wB2,1/M2);
 WP=blkdiag(wP1,wP2); %matrice peso s
 
-Delta_perf1 = ultidyn('Delta_perf1',[1 1]);
-Delta_perf2 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf3 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf4 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf = [Delta_perf1 Delta_perf2; Delta_perf3 Delta_perf4];
-
 %% creo il sistema con connect
 
 G_P.u = {'uD1','uD2','u_G_P1','u_G_P2'};
@@ -132,8 +126,44 @@ P_dist = lft(Delta,P);
 
 [K_DK,CLperf,info] = musyn(P_dist,2,2);
 
-K_DK = minreal(zpk(tf(K_DK)),1e-1);
+K_DK = minreal(zpk(tf(K_DK)),0.5);
 
 K_DK = [K_DK(1,1) 0; 0 K_DK(2,2)];
 
-bodemag(K_DK)
+%bodemag(K_DK)
+
+
+%% mu-analysis
+
+% creo incertezza di performance
+Delta_perf1 = ultidyn('Delta_perf1',[1 1]);
+Delta_perf2 = ultidyn('Delta_perf2',[1 1]);
+Delta_perf3 = ultidyn('Delta_perf2',[1 1]);
+Delta_perf4 = ultidyn('Delta_perf2',[1 1]);
+Delta_perf = [Delta_perf1 Delta_perf2; Delta_perf3 Delta_perf4];
+Delta = [ Delta_att,  zeros(2), zeros(2) ; zeros(2) , Delta_G, zeros(2); zeros(2), zeros(2), Delta_perf];
+
+N = lft (P,K_DK);
+
+N_zpk = zpk(N);
+% omega=logspace(-3,1,90);
+% Nfr=frd(N,omega);
+
+%NS
+N22 = N_zpk(5:6,5:6);
+nyquistplot(N22)
+
+%RS e RP
+
+N11 = N (1:4,1:4);
+
+blk=[-1 0;-1 0;-1 0;-1 0;2 2];
+
+[mubnds,muinfo]=mussv(N,blk,'c');
+muRP=mubnds(:,1);
+[muRPinf,MuRPw]=norm(muRP,inf);
+
+
+usys=lft(Delta,N);
+[stabmarg,wcu]=robstab(usys);
+

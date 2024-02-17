@@ -30,7 +30,7 @@ params_attuatori = [Km1, Km2, T1, T2, Tm1, Tm2];
 F_0 = [0; 0];
 
 dq_0 = [0; 0];
-q_0 = [0; 0];
+q_0 = [2; -pi/18];
 
 
 %% Filtro EKF %%
