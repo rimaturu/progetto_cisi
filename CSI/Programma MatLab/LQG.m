@@ -47,9 +47,9 @@ D_tot = [0, 0;
 G = ss(A_tot, B_tot, C_tot, D_tot);
 
 % Definisco le matrici di covarianza dei rumori in ingresso e dei sensori
-dev_std_fm = 100;
-dev_std_fa = 10;
-dev_std_z = 1;
+dev_std_fm = 200;
+dev_std_fa = 40;
+dev_std_z = 10;
 dev_std_theta = 0.3;
 
 % Matrice covarianza rumori in inngresso (gli errori di processo sono
@@ -64,7 +64,7 @@ QWV = blkdiag(Q, R);
 
 % Matrice di peso per stati e ingressi, dove pesiamo solo gli ingressi e
 % gli stati z e theta
-Q_pesi = blkdiag(zeros(4), eye(4));
+Q_pesi = blkdiag(zeros(4), blkdiag(1,1,1,1));
 
 % lqg(sistema in forma di stato,
 %     pesi per stato e ingressi,
@@ -79,7 +79,7 @@ Kf = info.L;
 
 % Matrici di peso per stati (stati + stati da integrare) e ingressi
 % Vado a pesare solo z, theta (2 volte sia per stato stimato che stato integrato)e i 2 ingressi
-Q_z = blkdiag(zeros(4), blkdiag(1,1,1,0.0001));
+Q_z = blkdiag(zeros(4), blkdiag(1,1,1,1));
 R_u = eye(2);
 
 % Calcolo del guadagno del controllore con integratori
@@ -93,8 +93,8 @@ K_LQG = zpk(K_LQG);
 
 G = zpk(G);
 
-S = 1/(eye(2) + G*K_LQG);
-bodemag(S);
-
-T = G*K_LQG/(eye(2) + G*K_LQG);
-bodemag(T);
+% S = 1/(eye(2) + G*K_LQG);
+% bodemag(S);
+% 
+% T = G*K_LQG/(eye(2) + G*K_LQG);
+% bodemag(T);

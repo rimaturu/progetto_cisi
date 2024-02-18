@@ -1,6 +1,6 @@
-clear
 close all
 clc
+%% Definizione parametri %%
 
 % Definizione parametri convertiplano %
 J = 5000;
@@ -23,12 +23,28 @@ Tm2 = 5;
 
 params_attuatori = [Km1, Km2, T1, T2, Tm1, Tm2];
 
+% Definizione parametri incerti %
+J_i = 5000;
+m_i = 2000;
+b_i = ureal('b',150,'Percentage',[-5,5]);
+beta_i=ureal('beta',15,'Percentage',[-5,5]);
+l_i = 10;
+
+% Definizione parametri attuatori incerti%
+Km1_i = 500;
+Km2_l = 100;
+T1_l = 0.5;
+%params_attuatori.T1=ureal('T1',0.1,'Percentage',[-5,5]);
+T2_l = 0.5;
+%params_attuatori.T2=ureal('T2',0.2,'Percentage',[-5,5]);
+Tm1_l = 5;
+Tm2_l = 5;
+
 % Condizioni iniziali %
 F_0 = [0; 0];
 
 dq_0 = [0; 0];
-q_0 = [0; 0];
-
+q_0 = [100; -pi/2];
 
 %% Filtro EKF %%
 
