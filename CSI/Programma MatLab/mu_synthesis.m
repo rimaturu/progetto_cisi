@@ -74,11 +74,11 @@ Delta_att = [Delta_att1 0; 0 Delta_att2];
 %% definisco il peso Wp di prestazione
 A1=1e-4;
 M1=2;
-wB1=0.09;
+wB1=0.1;
 A2=1e-4;
 M2=2;
-wB2=0.2;
-wP1=makeweight(1/A1,wB1,1/M2);
+wB2=0.1;
+wP1=makeweight(1/A1,wB1,1/M1);
 wP2=makeweight(1/A2,wB2,1/M2);
 WP=blkdiag(wP1,wP2); %matrice peso s
 

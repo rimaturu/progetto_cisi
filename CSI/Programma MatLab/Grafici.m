@@ -3,12 +3,22 @@ close all
 
 % Condizioni iniziali %
 F_0 = [0; 0];
+Prova = 2;
 
-% dq_0 = [0; 0];
-% q_0 = [100; -1];
-
+if(Prova == 1)
 dq_0 = [0; 0];
-q_0 = [randi([-200,200]); normrnd(0, 2*pi)];
+q_0 = [0; 0];
+end
+
+if(Prova == 2)
+dq_0 = [0; 0];
+q_0 = [200; -pi];
+end
+
+if(Prova == 3)
+dq_0 = [20; pi];
+q_0 = [-2000; -pi];
+end
 
 Convertiplano = sim("Modello_Convertiplano.slx");
 t_tot = Convertiplano.tout;

@@ -1,5 +1,7 @@
+clear all
 close all
 clc
+
 %% Definizione parametri %%
 
 % Definizione parametri convertiplano %
@@ -39,6 +41,12 @@ T2_i = 0.5;
 %params_attuatori.T2=ureal('T2',0.2,'Percentage',[-5,5]);
 Tm1_i = 5;
 Tm2_i = 5;
+
+% Condizioni iniziali %
+F_0 = [0; 0];
+
+dq_0 = [0; 0];
+q_0 = [100; -1];
 
 %% Filtro EKF %%
 
