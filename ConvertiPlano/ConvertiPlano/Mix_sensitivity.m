@@ -17,7 +17,7 @@ params_plano = [J, m, b, beta, l, g];
 
 % Definizione parametri attuatori %
 Km1 = 500;
-Km2 = 100;
+Km2 = 100;.
 T1 = 0.5;
 T2 = 0.5;
 Tm1 = 5;

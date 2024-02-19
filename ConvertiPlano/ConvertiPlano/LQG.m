@@ -35,7 +35,7 @@ q_0 = [2; -pi/18];
 
 %% Filtro EKF %%
 
-x_hat = [dq_0; q_0];
+x_hat = [q_0(1); dq_0(1); q_0(2); dq_0(2)];
 P = eye(4);
 
 dev_std_fm = 100;
@@ -52,39 +52,37 @@ t_EKF = 15;
 k = 0;
 x_EKF = x_hat;
 
-for t = dt:dt:t_EKF
-    
-    k = k + 1;
-    
-    % prediction
-        [x_hat, P] = predict_EKF(x_hat, P, Q, dt, F_0(1), F_0(2), params_plano);
-    % correction
-        [x_hat, P] = correct_EKF(x_hat, P, R);
-        
-        x_EKF = [x_EKF, x_hat];
-end
+% for t = dt:dt:t_EKF
+% 
+%     k = k + 1;
+% 
+%     % prediction
+%         [x_hat, P] = predict_EKF(x_hat, P, Q, dt, F_0(1), F_0(2), params_plano);
+%     % correction
+%         [x_hat, P] = correct_EKF(x_hat, P, R);
+% 
+%         x_EKF = [x_EKF, x_hat];
+% end
 
 
 %% 
 s = tf('s');
 
 % Linearizzazione sistema convertiplano intorno al punto z = theta = 0 %
-A_nom = [-b/m,           0,          0,                   0;
-            0,       -beta/J,        0,                   0;
-            1,           0,          0,                   0;
-            0,           1,          0,                   0];
+A_nom = [0 1 0 0; ...
+         0 -b/m 0 0; ...
+         0 0 0 1; ...
+         0 0 0 -beta/J];
 
-B_nom = [1/m,                 0;
-           0,             2*l/J;
-           0,                 0;
-           0,                 0];
+B_nom = [0     0   ; ...
+         1/m   0   ; ...
+         0     0   ; ...
+         0   2*l/J];
 
+C_nom = [1 0 0 0; ...
+         0 0 1 0];
 
-C_nom = [0,     0,      1,      0;
-         0,     0,      0,      1];
-    
-D_nom = [0, 0;
-         0, 0];
+D_nom = zeros(2);
 
 % Creazione sistemi attuatori in forma di stato
 G1 = tf([Km1], [Tm1 1]) * exp(-s*T1);
@@ -120,7 +118,7 @@ dev_std_theta = 0.3;
 
 % Matrice covarianza rumori in inngresso (gli errori di processo sono
 % riferiti solo alle equazioni di z: e theta:)
-Q = blkdiag(0, 0, dev_std_fm ^ 2, dev_std_fa ^ 2, 0, 0);
+Q = blkdiag(0, 0, 0, dev_std_fm ^ 2, 0, dev_std_fa ^ 2);
 
 % Matrice covarianza errori di misura (y1 = z; y2 = theta)
 R = blkdiag(dev_std_z ^ 2, dev_std_theta ^ 2);
@@ -130,7 +128,7 @@ QWV = blkdiag(Q, R);
 
 % Matrice di peso per stati e ingressi, dove pesiamo solo gli ingressi e
 % gli stati z e theta
-Q_pesi = blkdiag(zeros(4), eye(4));
+Q_pesi = blkdiag(zeros(2), 1, 0, 1, 0, eye(2));
 
 % lqg(sistema in forma di stato,
 %     pesi per stato e ingressi,
@@ -145,7 +143,7 @@ Kf = info.L;
 
 % Matrici di peso per stati (stati + stati da integrare) e ingressi
 % Vado a pesare solo z, theta (2 volte sia per stato stimato che stato integrato)e i 2 ingressi
-Q_z = blkdiag(zeros(4), blkdiag(1,1,1,0.0001));
+Q_z = blkdiag(zeros(2), 1, 0, 1, 0, 1, 0.001);
 R_u = eye(2);
 
 % Calcolo del guadagno del controllore con integratori
@@ -169,63 +167,63 @@ T = G*K_LQG/(eye(2) + G*K_LQG);
 %bodemag(T);
 
 
-%% funzione EKF
-
-function [x_hat, P] = predict_EKF(x_hat, P, Q, dt, f_m, f_a, params)
-    
-    dz = x_hat(1);
-    dtheta = x_hat(2);
-    z = x_hat(3);
-    theta = x_hat(4);
-    
-    J = params(1);
-    m = params(2);
-    b = params(3);
-    beta = params(4);
-    l = params(5);
-
-    g = params(6);
-    
-    F = [-b/m,          0,          0,          -f_m/m * sin(theta);
-           0,       -beta/J,        0,                   0;
-           1,           0,          0,                   0;
-           0,           1,          0,                   0];
-
-    D = [1/m * cos(theta),          0;
-                 0,               2*l/J;
-                 0,                 0;
-                 0,                 0];
-    
-    F = dt .* F + eye(4);  
-    D = dt .* D;
-
-    x_hat = x_hat + dt * [-b/m * dz + f_m/m * cos(theta) - g;
-                           -beta/J * dtheta + 2*l/J * f_a;
-                                         dz;
-                                       dtheta];
-
-    P = F*P*F' + D*Q*D';
-
-end
-
-
-function [x_hat, P] = correct_EKF(x_hat, P, R)
-    H = [0,     0,      1,      0;
-         0,     0,      0,      1];
-
-    M = [1 0
-         0 1];
-    
-    y = [x_hat(3) + normrnd(0, R(1,1)^(1/2));
-         x_hat(4) + normrnd(0, R(2,2)^(1/2))];
-    
-    y_hat = [x_hat(3);
-             x_hat(4)];
-
-    e = y - y_hat;
-    S = H*P*H' + M*R*M';
-    
-    L = P*H'*S^(-1);
-    x_hat = x_hat + L*e;
-    P = (eye(4) - L*H)*P*(eye(4) - L*H)' + L*M*R*M'*L';
-end
+% %% funzione EKF
+% 
+% function [x_hat, P] = predict_EKF(x_hat, P, Q, dt, f_m, f_a, params)
+% 
+%     z = x_hat(1);
+%     dz = x_hat(2);
+%     theta = x_hat(3);
+%     dtheta = x_hat(4);
+% 
+%     J = params(1);
+%     m = params(2);
+%     b = params(3);
+%     beta = params(4);
+%     l = params(5);
+% 
+%     g = params(6);
+% 
+%     F = [  0,           1,            0,                        0;
+%            0,          -b/m    -f_m/m * sin(theta),             0;
+%            0,           0,            0,                        1;
+%            0,           0,            0,                 -beta/J];
+% 
+%     D = [        0,                  0 ;
+%           1/m * cos(theta),          0 ;
+%                  0,                  0 ;
+%                  0,              2*l/J];
+% 
+%     F = dt .* F + eye(4);  
+%     D = dt .* D;
+% 
+%     x_hat = x_hat + dt * [                 dz                ;
+%                            -b/m * dz + f_m/m * cos(theta) - g;
+%                                           dtheta             ;
+%                               -beta/J * dtheta + 2*l/J * f_a];
+% 
+%     P = F*P*F' + D*Q*D';    
+% 
+% end
+% 
+% 
+% function [x_hat, P] = correct_EKF(x_hat, P, R)
+%     H = [1,     0,      0,      0;
+%          0,     0,      1,      0];
+% 
+%     M = [1 0
+%          0 1];
+% 
+%     y = [x_hat(1) + normrnd(0, R(1,1)^(1/2));
+%          x_hat(3) + normrnd(0, R(2,2)^(1/2))];
+% 
+%     y_hat = [x_hat(1);
+%              x_hat(3)];
+% 
+%     e = y - y_hat;
+%     S = H*P*H' + M*R*M';
+% 
+%     L = P*H'*S^(-1);
+%     x_hat = x_hat + L*e;
+%     P = (eye(4) - L*H)*P*(eye(4) - L*H)' + L*M*R*M'*L';
+% end

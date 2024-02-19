@@ -1,7 +1,7 @@
 %% mu-synthesis
-% clear
-% close all
-% clc
+ clear
+ close all
+ clc
 
 %% paramtri sistema
 % Definizione parametri convertiplano %
@@ -50,35 +50,31 @@ G_P = zpk(P);
 %% Definisco le fdt degli attuatori nominali (senza tempo di ritardo) e perturbate
 s = tf('s');
 
-[num1,den1] = pade(T1,4);
-[num2,den2] = pade(T2,4);
-
-pade1 = tf(num1,den1);
-pade2 = tf(num2,den2);
-
 Gm1_n = Km1/(Tm1*s+1);
-Gm1_p = Km1/(Tm1*s+1)*pade1;
+Gm1_p = Km1/(Tm1*s+1)*exp(-T1*s);
 Gm2_n = Km2/(Tm2*s+1);
-Gm2_p = Km2/(Tm2*s+1)*pade2;
+Gm2_p = Km2/(Tm2*s+1)*exp(-T2*s);
 
 reldiff1 = (Gm1_p-Gm1_n)/Gm1_n;
 reldiff2 = (Gm2_p-Gm2_n)/Gm2_n;
 
 % ricavo i pesi Wi degli attuatori
-Wi1 = 0.003*5*10^4*(s+0.03)/(s+15)^2;
-Wi2 = 0.012*10^4*(s+0.03)/(s+15)^2;
+Wi1 = makeweight(10^-4,1,2.5);
+Wi2 = makeweight(10^-4,1,2.5);
+%Wi1 = 0.003*5*10^4*(s+0.03)/(s+15);
+%Wi2 = 0.012*10^4*(s+0.03)/(s+15)^2;
 
-% figure(1)
-% hold on
-% grid on
-% bodemag(reldiff1,Wi1)
-% hold off
-% 
-% figure(2)
-% hold on
-% grid on
-% bodemag(reldiff2,Wi2)
-% hold off
+figure(1)
+hold on
+grid on
+bodemag(reldiff1,Wi1)
+hold off
+
+figure(2)
+hold on
+grid on
+bodemag(reldiff2,Wi2)
+hold off
 
 % creo la upper lft degli attuatori
 
