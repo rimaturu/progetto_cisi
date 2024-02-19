@@ -35,9 +35,9 @@ A = [0 1 0 0; ...
      0 0 0 -beta/J];
 
 B = [0 0; ...
-     1 0; ...
+     1/m 0; ...
      0 0; ...
-     0 2*l];
+     0 2*l/J];
 
 C = [1 0 0 0; ...
      0 0 1 0];
@@ -70,10 +70,10 @@ wU=tf(1);
 WU=blkdiag(wU,wU); %matrice peso ks
 A1=1e-4;
 M1=2;
-wB1=0.3;
+wB1=0.09;
 A2=1e-4;
 M2=2;
-wB2=0.5;
+wB2=0.2;
 wP1=makeweight(1/A1,wB1,1/M2);
 wP2=makeweight(1/A2,wB2,1/M2);
 WP=blkdiag(wP1,wP2); %matrice peso s
@@ -103,8 +103,8 @@ T = eye(2) - S;
 % bodemag(T(1,1),1/wT)
 % 
 % bodemag(T(2,2),1/wT)
-
-step(T(1,1))
+% 
+% step(T(1,1))
 
 %% controllo H-inf
 
