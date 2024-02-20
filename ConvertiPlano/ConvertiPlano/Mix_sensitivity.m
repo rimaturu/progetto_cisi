@@ -1,7 +1,6 @@
 %% Mix sensitivity
-% clear
-% close all
-% clc
+close all
+clc
 
 %% paramtri sistema
 % Definizione parametri convertiplano %
@@ -65,20 +64,26 @@ G_tot_n = G_n*G_attuators_n;
 
 %% Trovo controllore Mix sensitivity
 
-
 wU=tf(1);
-WU=blkdiag(wU,wU); %matrice peso ks
-% A1=1e-4;
-% M1=2;
-% wB1=0.1;
-% A2=1e-4;
-% M2=2;
-% wB2=0.13;
-% wP1=makeweight(1/A1,wB1,1/M2);
-% wP2=makeweight(1/A2,wB2,1/M2,0,2);
-WP=blkdiag(wP1,wP2); %matrice peso s
-WT = [1/wP1 0;0 1/wP2];
+WU=blkdiag(wU,wU); 
 
+A1=1e-4;
+M1=2;
+wB1=0.16;
+A2=1e-4;
+M2=2;
+wB2=0.16;
+
+wP1 = makeweight(1/A1,wB1,1/M1);
+wP2 = makeweight(1/A2,wB2,1/M2);
+WP = blkdiag(wP1,wP2); 
+
+wT1 = makeweight(1/M1,wB1,1/A1);
+wT2 = makeweight(1/M2,wB2,1/A2);
+WT = blkdiag(wT1,wT2);
+
+
+%calcolo controllore mix-sensitivity
 [K_ms,CL_ms,GAM_ms,~] = mixsyn(G_tot_n,WP,WU,WT); 
 
 K_ms = minreal(zpk(tf(K_ms)),1e-1);

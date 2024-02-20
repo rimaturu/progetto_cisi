@@ -127,108 +127,27 @@ K_LQG = zpk(K_LQG);
 
 G = zpk(G);
 
+% Parametri funzioni peso Wp %
+A1=1e-4;
+M1=2;
+wB1=0.1;
+
+A2=1e-4;
+M2=2;
+wB2=0.1;
+
+wP1=makeweight(1/A1,wB1,1/M1);
+wP2=makeweight(1/A2,wB2,1/M2);
+
+% Confronto S e funzioni peso Wp %
 S = 1/(eye(2) + G*K_LQG);
 
-%bodemag(S(1,1),S(2,2));
+figure(1);
+S_Wp1 = bodeplot(S(1,1), 1/wP1);
+setoptions(S_Wp1, 'PhaseVisible','off');
+legend('S(1,1)', '1/wp1');
 
-T = G*K_LQG/(eye(2) + G*K_LQG);
-%bodemag(T(1,1),T(2,2));
-
-%pesi mix-sensitivity
-% A1=1e-4;
-% M1=2;
-% wB1=0.1;
-% A2=1e-4;
-% M2=2;
-% wB2=0.13;
-% wP1=makeweight(1/A1,wB1,1/M2);
-% wP2=makeweight(1/A2,wB2,1/M2,0,2);
-% WP=blkdiag(wP1,wP2); %matrice peso s
-bodemag(S(1,1))
-ord=3; %ordine del peso che voglio
-[freq,resp_db]=ginput(10)
-resp=zeros(1,10); %aumenta l'efficienza del codice perchè definisce
-                  %la dimensione
-for i= 1:10
-    resp(i)=10^(resp_db(i)/20);
-end
-sys=frd(resp,freq);
-W=fitmagfrd(sys,ord);
-wP1=tf(W);
-wP1 = 1/wP1;
-
-bodemag(S(2,2))
-ord=3; %ordine del peso che voglio
-[freq,resp_db]=ginput(10)
-resp=zeros(1,10); %aumenta l'efficienza del codice perchè definisce
-                  %la dimensione
-for i= 1:10
-    resp(i)=10^(resp_db(i)/20);
-end
-sys=frd(resp,freq);
-W=fitmagfrd(sys,ord);
-wP2=tf(W);
-wP2 = 1/wP2;
-
-bodemag(T(1,1))
-ord=3; %ordine del peso che voglio
-[freq,resp_db]=ginput(10)
-resp=zeros(1,10); %aumenta l'efficienza del codice perchè definisce
-                  %la dimensione
-for i= 1:10
-    resp(i)=10^(resp_db(i)/20);
-end
-sys=frd(resp,freq);
-W=fitmagfrd(sys,ord);
-wT1=tf(W);
-wT1 = 1/wT1;
-
-bodemag(T(2,2))
-ord=3; %ordine del peso che voglio
-[freq,resp_db]=ginput(10)
-resp=zeros(1,10); %aumenta l'efficienza del codice perchè definisce
-                  %la dimensione
-for i= 1:10
-    resp(i)=10^(resp_db(i)/20);
-end
-sys=frd(resp,freq);
-W=fitmagfrd(sys,ord);
-wT2=tf(W);
-wT2 = 1/wT2;
-
-%plot
-f = figure;
-f.WindowState = 'maximized';
-subplot(2, 2, 1);
-hold on
-set(gca, 'FontSize', 15);
-%plot(omega,S1,'LineWidth', 2);
-bodemag(S(1,1),1/wP1)
-title('S(1,1)', 'FontSize', 20);
-grid on;
-hold off
-
-subplot(2, 2, 2);
-hold on
-set(gca, 'FontSize', 15);
-bodemag(S(2,2),1/wP2)
-title('S(2,2)', 'FontSize', 20);
-grid on;
-hold off
-
-subplot(2, 2, 3);
-hold on
-set(gca, 'FontSize', 15);
-bodemag(T(1,1),1/wT1)
-title('T(1,1)', 'FontSize', 20);
-
-grid on;
-hold off
-
-subplot(2, 2, 4);
-hold on
-set(gca, 'FontSize', 15);
-bodemag(T(2,2),1/wT2)
-title('T(2,2)', 'FontSize', 20);
-grid on;
-hold off
+figure(2);
+S_Wp2 = bodeplot(S(2,2), 1/wP2);
+setoptions(S_Wp2, 'PhaseVisible','off');
+legend('S(2,2)', '1/wp2');
