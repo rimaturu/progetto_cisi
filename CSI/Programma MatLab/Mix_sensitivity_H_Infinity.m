@@ -49,10 +49,10 @@ M1=2;
 wB1=0.1;
 A2=1e-4;
 M2=2;
-wB2=0.1;
+wB2=0.13;
 
 wP1=makeweight(1/A1,wB1,1/M1);
-wP2=makeweight(1/A2,wB2,1/M2);
+wP2=makeweight(1/A2,wB2,1/M2, 0, 2);
 WP=blkdiag(wP1,wP2); 
 
 wT1 = makeweight(1/M1,wB1,1/A1);
@@ -72,17 +72,17 @@ S = inv(eye(2) + G_tot_n*K_ms);
 KS =K_ms*S;
 T = eye(2) - S;
 
-% bodemag(S(1,1),1/wP1)
-% 
-% bodemag(S(2,2),1/wP2)
-% 
-% bodemag(KS(1,1),1/wU)
-% 
-% bodemag(KS(2,2),1/wU)
-% 
-% bodemag(T(1,1),1/wT1)
-% 
-% bodemag(T(2,2),1/wT2)
+bodemag(S(1,1),1/wP1)
+
+bodemag(S(2,2),1/wP2)
+
+bodemag(KS(1,1),1/wU)
+
+bodemag(KS(2,2),1/wU)
+
+bodemag(T(1,1),1/wT1)
+
+bodemag(T(2,2),1/wT2)
 
 step(T(1,1))
 
