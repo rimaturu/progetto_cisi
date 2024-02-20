@@ -79,7 +79,7 @@ Kf = info.L;
 
 % Matrici di peso per stati (stati + stati da integrare) e ingressi
 % Vado a pesare solo z, theta (2 volte sia per stato stimato che stato integrato)e i 2 ingressi
-Q_z = blkdiag(zeros(4), blkdiag(1,1,1,1));
+Q_z = blkdiag(zeros(4), blkdiag(1,1,1,0.001));
 R_u = eye(2);
 
 % Calcolo del guadagno del controllore con integratori
@@ -99,22 +99,25 @@ G = zpk(G);
 A1=1e-4;
 M1=2;
 wB1=0.1;
+
 A2=1e-4;
 M2=2;
-wB2=0.13;
+wB2=0.1;
 
 wP1=makeweight(1/A1,wB1,1/M1);
-wP2=makeweight(1/A2,wB2,1/M2, 0, 2);
+wP2=makeweight(1/A2,wB2,1/M2);
 
 % Confronto S e funzioni peso Wp %
 S = 1/(eye(2) + G*K_LQG);
 
-S_Wp = bodeplot(S(1,1), 1/wP1);
-setoptions(S_Wp, 'PhaseVisible','off');
+figure(1);
+S_Wp1 = bodeplot(S(1,1), 1/wP1);
+setoptions(S_Wp1, 'PhaseVisible','off');
 legend('S(1,1)', '1/wp1');
 
-S_Wp = bodeplot(S(2,2), 1/wP2);
-setoptions(S_Wp, 'PhaseVisible','off');
+figure(2);
+S_Wp2 = bodeplot(S(2,2), 1/wP2);
+setoptions(S_Wp2, 'PhaseVisible','off');
 legend('S(2,2)', '1/wp2');
 
 

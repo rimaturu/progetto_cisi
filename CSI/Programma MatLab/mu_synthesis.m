@@ -72,13 +72,15 @@ Delta_att = [Delta_att1 0; 0 Delta_att2];
 %% definisco il peso Wp di prestazione
 A1=1e-4;
 M1=2;
-wB1=0.1;
+wB1=0.16;
+
 A2=1e-4;
 M2=2;
-wB2=0.13;
+wB2=0.16;
 
 wP1=makeweight(1/A1,wB1,1/M1);
-wP2=makeweight(1/A2,wB2,1/M2, 0, 2);
+wP2=makeweight(1/A2,wB2,1/M2);
+
 WP=blkdiag(wP1,wP2); %matrice peso s
 
 %% Creo il sistema P con connect
@@ -110,40 +112,8 @@ P_delta = lft(Delta,P);
 [K_DK,CLperf,info] = musyn(P_delta,2,2);
 
 % Riduco ordine del controllore
-K_DK = minreal(zpk(tf(K_DK)),0.5);
+% K_DK = minreal(zpk(tf(K_DK)),0.5);
 % Tolgo termini non diagonali (guadagni dell'ordine 10e-10!)
 K_DK = [K_DK(1,1) 0; 0 K_DK(2,2)];
 
-%bodemag(K_DK)
-
-%% mu-analysis
-
-% creo incertezza di performance
-Delta_perf1 = ultidyn('Delta_perf1',[1 1]);
-Delta_perf2 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf3 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf4 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf = [Delta_perf1 Delta_perf2; Delta_perf3 Delta_perf4];
-Delta_RP = [ Delta_att,  zeros(2), zeros(2) ; zeros(2) , Delta_G, zeros(2); zeros(2), zeros(2), Delta_perf];
-
-N = lft(P, K_DK);
-N_zpk = zpk(N);
-
-%NS
-N22 = N_zpk(5:6, 5:6);
-% nyquistplot(N22);
-
-%RS e RP
-N11 = N (1:4, 1:4);
-
-blk = [-1 0; -1 0; -1 0; -1 0; 2 2];
-
-[mubnds,muinfo]=mussv(N,blk);
-bodemag(mubnds);
-muRP=mubnds(:,1);
-[muRPinf,MuRPw]=norm(muRP,inf);
-
-
-usys=lft(Delta,N);
-[stabmarg,wcu]=robstab(usys);
 
