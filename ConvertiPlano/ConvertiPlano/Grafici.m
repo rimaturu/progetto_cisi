@@ -20,7 +20,7 @@ dq_0 = [20; pi];
 q_0 = [-2000; -pi];
 end
 
-Convertiplano = sim("Modello_Convertiplano.slx", 'StopTime', '100');
+Convertiplano = sim("Modello_Convertiplano.slx", 'StopTime', '1000');
 t_tot = Convertiplano.tout;
 
 % Dati LQG %
