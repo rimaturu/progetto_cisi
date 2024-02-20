@@ -8,21 +8,6 @@ yL_I = Convertiplano.yL_I.Data;
 yNL = Convertiplano.yNL.Data;
 yNL_I = Convertiplano.yNL_I.Data;
 
-%% Plot della stima EKF %%
-% subplot(4, 2, 1);
-% hold on
-% plot(0:dt:t_EKF, x_EKF(3,:));
-% title('z\_hat');
-% grid on;
-% hold off
-% 
-% subplot(4, 2, 2);
-% hold on
-% plot(0:dt:t_EKF, x_EKF(4,:));
-% title('theta\_hat');
-% grid on;
-% hold off
-
 %% Plot degli stati da controllare LQG %%
 
 % Plot per Sist. Lineare senza Integratore %
