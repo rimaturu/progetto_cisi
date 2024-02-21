@@ -1,7 +1,6 @@
 %% Controllo LQG %%
-% clear
-% close all
-% clc
+close all
+clc
 
 %% paramtri sistema
 % Definizione parametri convertiplano %

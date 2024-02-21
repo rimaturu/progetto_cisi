@@ -1,9 +1,14 @@
 close all
+clc
+
+LQG;
+Mix_sensitivity;
+mu_synthesis;
 
 f = figure;
 f.WindowState = 'maximized';
 
-Convertiplano = sim("Modello_Convertiplano.slx");
+Convertiplano = sim("Modello_Convertiplano.slx", 'StopTime', '100');
 t_tot = Convertiplano.tout;
 
 % Dati LQG %

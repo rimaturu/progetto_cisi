@@ -1,7 +1,6 @@
 %% mu-synthesis
- % clear
- % close all
- % clc
+close all
+clc
 
 %% paramtri sistema
 % Definizione parametri convertiplano %
@@ -30,11 +29,18 @@ Tm2 = 5;
 %% Definisco il sistema linearizzato nel PE
 % PE = (0,0,0,0)  %(x,x_d,theta,theta_d)
 
-A = [0 1 0 0; 0 -b/m 0 0; 0 0 0 1; 0 0 0 -beta/J];
+A = [0   1  0    0;... 
+     0 -b/m 0    0;...
+     0   0  0    1;...
+     0   0  0 -beta/J];
 
-B = [0 0; 1/m 0; 0 0; 0 2*l/J];
+B = [ 0    0;...
+     1/m   0;...
+      0    0;...
+      0  2*l/J];
 
-C = [1 0 0 0; 0 0 1 0];
+C = [1 0 0 0;...
+     0 0 1 0];
 
 D = zeros(2);
 
@@ -129,37 +135,5 @@ K_DK = [K_DK(1,1) 0; 0 K_DK(2,2)];
 %bodemag(K_DK)
 
 
-%% mu-analysis
 
-% creo incertezza di performance
-Delta_perf1 = ultidyn('Delta_perf1',[1 1]);
-Delta_perf2 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf3 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf4 = ultidyn('Delta_perf2',[1 1]);
-Delta_perf = [Delta_perf1 Delta_perf2; Delta_perf3 Delta_perf4];
-Delta = [ Delta_att,  zeros(2), zeros(2) ; zeros(2) , Delta_G, zeros(2); zeros(2), zeros(2), Delta_perf];
-
-N = lft (P,K_DK);
-
-N_zpk = zpk(N);
-% omega=logspace(-3,1,90);
-% Nfr=frd(N,omega);
-
-%NS
-N22 = N_zpk(5:6,5:6);
-nyquistplot(N22)
-
-%RS e RP
-
-N11 = N (1:4,1:4);
-
-blk=[-1 0;-1 0;-1 0;-1 0;2 2];
-
-[mubnds,muinfo]=mussv(N,blk,'c');
-muRP=mubnds(:,1);
-[muRPinf,MuRPw]=norm(muRP,inf);
-
-
-usys=lft(Delta,N);
-[stabmarg,wcu]=robstab(usys);
 
