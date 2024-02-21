@@ -46,10 +46,10 @@ WU=blkdiag(wU,wU);
 
 A1=1e-4;
 M1=2;
-wB1=0.16;
+wB1=0.3;
 A2=1e-4;
 M2=2;
-wB2=0.16;
+wB2=0.3;
 
 wP1 = makeweight(1/A1,wB1,1/M1);
 wP2 = makeweight(1/A2,wB2,1/M2);
@@ -63,7 +63,7 @@ WT = blkdiag(wT1,wT2);
 [K_ms,CL_ms,GAM_ms,~] = mixsyn(G_tot_n,WP,WU,WT); 
 
 % Riduco ordine del controllore
-% K_ms = minreal(zpk(tf(K_ms)),1e-1);
+K_ms = minreal(zpk(tf(K_ms)),1e-1);
 % Tolgo termini non diagonali (guadagni dell'ordine 10e-10!)
 K_ms = [K_ms(1,1) 0; 0 K_ms(2,2)];
 

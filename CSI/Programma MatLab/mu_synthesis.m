@@ -72,11 +72,11 @@ Delta_att = [Delta_att1 0; 0 Delta_att2];
 %% definisco il peso Wp di prestazione
 A1=1e-4;
 M1=2;
-wB1=0.16;
+wB1=0.3;
 
 A2=1e-4;
 M2=2;
-wB2=0.16;
+wB2=0.3;
 
 wP1=makeweight(1/A1,wB1,1/M1);
 wP2=makeweight(1/A2,wB2,1/M2);
@@ -112,8 +112,9 @@ P_delta = lft(Delta,P);
 [K_DK,CLperf,info] = musyn(P_delta,2,2);
 
 % Riduco ordine del controllore
-% K_DK = minreal(zpk(tf(K_DK)),0.5);
+K_DK = minreal(zpk(tf(K_DK)),1e-1);
 % Tolgo termini non diagonali (guadagni dell'ordine 10e-10!)
-K_DK = [K_DK(1,1) 0; 0 K_DK(2,2)];
+K_DK = [zpk(K_DK(1,1)) 0; 0 zpk(K_DK(2,2))];
+
 
 
