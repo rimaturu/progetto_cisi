@@ -1,6 +1,5 @@
 clear all
 close all
-clc
 
 %% Definizione parametri %%
 
