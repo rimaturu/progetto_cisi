@@ -1,5 +1,5 @@
 %% Mu-analysis %%
-%clear 
+clear 
 close all
 clc
 
@@ -8,7 +8,6 @@ mu_synthesis;
 
 % Creo incertezza di performance per RP
 Delta_perf = ultidyn('Delta_perf', [2 2]);
-
 
 % Struttura matrice Delta_RP
 Delta_RP = [ Delta_att,  zeros(2), zeros(2) ; zeros(2) , Delta_G, zeros(2); zeros(2), zeros(2), Delta_perf];
@@ -70,36 +69,49 @@ RS_mix = lft(Delta,N11);
 
 
 %% Plot %%
+w = logspace(-7, 2, 100);
 
 % f = figure(1);
 % f.Color ='White';
 % nyquist(N22_ms)
 % title('NS', 'FontSize', 20);
+% 
+% f_NP = figure(2);
+% f_NP.Color ='White';
+% grid on
+% NP = sigmaplot(N22_ms);     
+% title('NP', 'FontSize', 20);
+% legend( 'z','theta'); 
 
 f = figure(1);
 f.Color ='White';
 nyquist(N22_DK)
 title('NS', 'FontSize', 20);
 
+f_NP = figure(2);
+f_NP.Color ='White';
+grid on
+NP = sigmaplot(N22_DK);     
+title('NP', 'FontSize', 20);
+legend( 'z','theta'); 
 
-w = logspace(-7, 2, 100);
 
 % Confronto upperbound del valore singolare strutturato per RP
-f2 = figure(2);
+f2 = figure(3);
 f2.Color ='White';
-RP = bodeplot(muRP_mix, tf(1), 'k', w);    %muRP_mu, 
+RP = bodeplot(muRP_mu, tf(1), 'k', w);    % muRP_mix,
 setoptions(RP, 'PhaseVisible','off', 'Grid', 'on');
 title('RP', 'FontSize', 20);
-legend( 'muRP\_mix');           %'muRP\_mu',
+legend('muRP\_mu' );           %,'muRP\_mix'
 
 
 % Confronto upperbound del valore singolare strutturato per RS
-f3 = figure(3);
+f3 = figure(4);
 f3.Color ='White';
-RS = bodeplot(muRS_mix, tf(1), 'k', w);         %muRS_mu, 
+RS = bodeplot(muRS_mu, tf(1), 'k', w);         % muRS_mix,
 setoptions(RS, 'PhaseVisible','off', 'Grid', 'on');
 title('RS', 'FontSize', 20);
-legend('muRS\_mix');            %'muRS\_mu', 
+legend('muRS\_mu');           % , 'muRS\_mix'
 
 
 % Confronto norma H-inf del valore singolare strutturato per RP

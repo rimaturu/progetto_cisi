@@ -82,8 +82,8 @@ G = ss(A_tot, B_tot, C_tot, D_tot);
 % Definisco le matrici di covarianza dei rumori in ingresso e dei sensori
 dev_std_fm = 100;
 dev_std_fa = 10;
-dev_std_z = 1;
-dev_std_theta = 0.3;
+dev_std_z = 0.1;
+dev_std_theta = 0.003;
 
 % Matrice covarianza rumori in ingresso (gli errori di processo sono
 % riferiti solo alle equazioni di z: e theta:)

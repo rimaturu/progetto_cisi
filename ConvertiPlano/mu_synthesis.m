@@ -93,10 +93,10 @@ Delta_att = [Delta_att1 0; 0 Delta_att2];
 %% definisco il peso Wp di prestazione
 A1=1e-4;
 M1=2;
-wB1=0.1;
+wB1=0.25;
 A2=1e-4;
 M2=2;
-wB2=0.13;
+wB2=0.25;
 wP1=makeweight(1/A1,wB1,1/M2);
 wP2=makeweight(1/A2,wB2,1/M2);
 WP=blkdiag(wP1,wP2); %matrice peso s
@@ -128,7 +128,7 @@ P_dist = lft(Delta,P);
 
 [K_DK,CLperf,info] = musyn(P_dist,2,2);
 
-K_DK = minreal(zpk(tf(K_DK)),0.5);
+K_DK = minreal(zpk(tf(K_DK)));
 
 K_DK = [K_DK(1,1) 0; 0 K_DK(2,2)];
 
