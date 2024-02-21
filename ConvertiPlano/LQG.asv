@@ -2,8 +2,8 @@
 close all
 clc
 
-incertezza = false;      % scelta modello in certo
-P_inc = 100;             % percantuale incertezza parametri
+incertezza = true;      % scelta modello in certo
+P_inc = 500;             % percantuale incertezza parametri
 
 %% parametri sistema
 % Definizione parametri convertiplano %
@@ -246,14 +246,12 @@ wT2=1/wP2;
 %plot
 f = figure;
 f.WindowState = 'maximized';
-f.Color = "white";
 subplot(2, 2, 1);
 hold on
 set(gca, 'FontSize', 15);
 %plot(omega,S1,'LineWidth', 2);
 bodemag(S(1,1),1/wP1)
 title('S(1,1)', 'FontSize', 20);
-legend('S(1,1)','1/wP1', 'FontSize', 15)
 grid on;
 hold off
 
@@ -262,7 +260,6 @@ hold on
 set(gca, 'FontSize', 15);
 bodemag(S(2,2),1/wP2)
 title('S(2,2)', 'FontSize', 20);
-legend('S(2,2)','1/wP2', 'FontSize', 15)
 grid on;
 hold off
 

@@ -6,7 +6,7 @@ Mix_sensitivity;
 mu_synthesis;
 
 
-Convertiplano = sim("Modello_Convertiplano.slx", 'StopTime', '50');
+Convertiplano = sim("Modello_Convertiplano.slx", 'StopTime', '100');
 t_tot = Convertiplano.tout;
 
 % Dati LQG %
@@ -29,7 +29,6 @@ f_LQG = figure(1);
 f_LQG.WindowState = 'maximized';
 f_LQG.Name = 'LQG';
 f_LQG.NumberTitle = 'off';
-f_LQG.Color = "white";
 
 % Plot per Sist. Lineare senza Integratore %
 subplot(2, 2, 1);
@@ -73,7 +72,6 @@ f_LQG_I = figure(2);
 f_LQG_I.WindowState = 'maximized';
 f_LQG_I.Name = 'LQG con Integratore';
 f_LQG_I.NumberTitle = 'off';
-f_LQG_I.Color = "white";
 
 % Plot per Sist. Lineare con Integratore %
 subplot(2, 2, 1);
@@ -116,10 +114,10 @@ hold off
 %% Plot degli stati da controllare Mixed-Sensitivity %%
 
 f_MS = figure(3);
+
 f_MS.WindowState = 'maximized';
 f_MS.Name = 'Mixed-Sensitivity';
 f_MS.NumberTitle = 'off';
-f_MS.Color = "white";
 
 % Plot per Sist. Lineare %
 subplot(2, 2, 1);
@@ -212,7 +210,6 @@ f_Mu = figure(5);
 f_Mu.WindowState = 'maximized';
 f_Mu.Name = 'Mu-Synthesis';
 f_Mu.NumberTitle = 'off';
-f_Mu.Color = "white";
 
 % Plot per Sist. Lineare %
 subplot(2, 2, 1);

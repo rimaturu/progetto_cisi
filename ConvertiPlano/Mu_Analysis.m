@@ -1,5 +1,5 @@
 %% Mu-analysis %%
-clear 
+%clear 
 close all
 clc
 
@@ -24,7 +24,7 @@ N = lft(P, K_DK);
 N_zpk = zpk(N);
 
 %NS
-N22 = N_zpk(5:6, 5:6);
+N22_DK = N_zpk(5:6, 5:6);
 
 %RS e RP
 N11 = N(1:4, 1:4);
@@ -49,7 +49,7 @@ N = lft(P, K_ms);
 N_zpk = zpk(N);
 
 %NS
-N22 = N_zpk(5:6, 5:6);
+N22_ms = N_zpk(5:6, 5:6);
 
 %RS e RP
 N11 = N(1:4, 1:4);
@@ -71,22 +71,35 @@ RS_mix = lft(Delta,N11);
 
 %% Plot %%
 
+% f = figure(1);
+% f.Color ='White';
+% nyquist(N22_ms)
+% title('NS', 'FontSize', 20);
+
+f = figure(1);
+f.Color ='White';
+nyquist(N22_DK)
+title('NS', 'FontSize', 20);
+
+
 w = logspace(-7, 2, 100);
 
 % Confronto upperbound del valore singolare strutturato per RP
-figure(1);
-RP = bodeplot(muRP_mu, muRP_mix, tf(1), 'k', w);
+f2 = figure(2);
+f2.Color ='White';
+RP = bodeplot(muRP_mix, tf(1), 'k', w);    %muRP_mu, 
 setoptions(RP, 'PhaseVisible','off', 'Grid', 'on');
 title('RP', 'FontSize', 20);
-legend('muRP\_mu', 'muRP\_mix');
+legend( 'muRP\_mix');           %'muRP\_mu',
 
 
 % Confronto upperbound del valore singolare strutturato per RS
-figure(2);
-RS = bodeplot(muRS_mu, muRS_mix, tf(1), 'k', w);
+f3 = figure(3);
+f3.Color ='White';
+RS = bodeplot(muRS_mix, tf(1), 'k', w);         %muRS_mu, 
 setoptions(RS, 'PhaseVisible','off', 'Grid', 'on');
 title('RS', 'FontSize', 20);
-legend('muRS\_mu', 'muRS\_mix');
+legend('muRS\_mix');            %'muRS\_mu', 
 
 
 % Confronto norma H-inf del valore singolare strutturato per RP
