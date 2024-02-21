@@ -27,7 +27,7 @@ D_nom = [0, 0;
 % Trovo matrice di trasferimento del linearizzato
 G = ss(A_nom,B_nom,C_nom,D_nom);
 
-[G,Delta_G,Blkstruct]=lftdata(G); % Trovo matrice Delta_G associata ai parametri incerti
+[G,Delta_G,Blkstruct] = lftdata(G); % Trovo matrice Delta_G associata ai parametri incerti
 
 G = zpk(G);
 
@@ -70,18 +70,18 @@ Delta_att2 = ultidyn('Delta_att2',[1 1]);
 Delta_att = [Delta_att1 0; 0 Delta_att2];
 
 %% definisco il peso Wp di prestazione
-A1=1e-4;
-M1=2;
-wB1=0.3;
+A1 = 1e-4;
+M1 = 2;
+wB1 = 0.3;
 
-A2=1e-4;
-M2=2;
-wB2=0.3;
+A2 = 1e-4;
+M2 = 2;
+wB2 = 0.3;
 
-wP1=makeweight(1/A1,wB1,1/M1);
-wP2=makeweight(1/A2,wB2,1/M2);
+wP1 = makeweight(1/A1,wB1,1/M1);
+wP2 = makeweight(1/A2,wB2,1/M2);
 
-WP=blkdiag(wP1,wP2); %matrice peso s
+WP = blkdiag(wP1,wP2); %matrice peso s
 
 %% Creo il sistema P con connect
 
@@ -102,7 +102,7 @@ Sum5 = sumblk ('u_G1 = y_att1');
 Sum6 = sumblk ('u_G2 = y_att2');
 
 
-P = connect (G,P_att,WP,Sum1,Sum2,Sum3,Sum4,Sum5,Sum6,{'ud1','ud2','uD1','uD2','w1','w2','u1','u2'},{'yd1','yd2','yD1','yD2','z1','z2','e1','e2'});
+P = connect (G,WP,P_att,Sum1,Sum2,Sum3,Sum4,Sum5,Sum6,{'ud1','ud2','uD1','uD2','w1','w2','u1','u2'},{'yd1','yd2','yD1','yD2','z1','z2','e1','e2'});
 
 Delta = [Delta_att,  zeros(2) ; zeros(2) , Delta_G];
 

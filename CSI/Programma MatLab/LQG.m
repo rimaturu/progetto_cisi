@@ -96,16 +96,16 @@ K_LQG = zpk(K_LQG);
 G = zpk(G);
 
 % Parametri funzioni peso Wp %
-A1=1e-4;
-M1=2;
-wB1=0.1;
+A1 = 1e-4;
+M1 = 2;
+wB1 = 0.1;
 
-A2=1e-4;
-M2=2;
-wB2=0.1;
+A2 = 1e-4;
+M2 = 2;
+wB2 = 0.1;
 
-wP1=makeweight(1/A1,wB1,1/M1);
-wP2=makeweight(1/A2,wB2,1/M2);
+wP1 = makeweight(1/A1,wB1,1/M1);
+wP2 = makeweight(1/A2,wB2,1/M2);
 
 % Confronto S e funzioni peso Wp %
 S = 1/(eye(2) + G*K_LQG);

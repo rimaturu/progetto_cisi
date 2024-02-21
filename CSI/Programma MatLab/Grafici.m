@@ -6,18 +6,18 @@ F_0 = [0; 0];
 Prova = 2;
 
 if(Prova == 1)
-dq_0 = [0; 0];
-q_0 = [0; 0];
+    dq_0 = [0; 0];
+    q_0 = [0; 0];
 end
 
 if(Prova == 2)
-dq_0 = [0; 0];
-q_0 = [200; -pi];
+    dq_0 = [0; 0];
+    q_0 = [200; -pi];
 end
 
 if(Prova == 3)
-dq_0 = [20; pi];
-q_0 = [-2000; -pi];
+    dq_0 = [20; pi];
+    q_0 = [-2000; -pi];
 end
 
 Convertiplano = sim("Modello_Convertiplano.slx", 'StopTime', '200');
@@ -40,21 +40,6 @@ HI_yNL = Convertiplano.HI_yNL.Data;
 % Dati Mu-synthesis %
 Mu_yL = Convertiplano.Mu_yL.Data;
 Mu_yNL = Convertiplano.Mu_yNL.Data;
-
-%% Plot della stima EKF %%
-% subplot(4, 2, 1);
-% hold on
-% plot(0:dt:t_EKF, x_EKF(3,:));
-% title('z\_hat');
-% grid on;
-% hold off
-% 
-% subplot(4, 2, 2);
-% hold on
-% plot(0:dt:t_EKF, x_EKF(4,:));
-% title('theta\_hat');
-% grid on;
-% hold off
 
 %% Plot degli stati da controllare LQG %%
 f_LQG = figure(1);

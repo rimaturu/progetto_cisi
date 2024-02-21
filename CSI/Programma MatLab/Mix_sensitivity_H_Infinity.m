@@ -41,15 +41,15 @@ G_tot_n = G_n*G_attuators_n;
 
 % Modello i pesi WU, WP, WT %
 
-wU=tf(1);
-WU=blkdiag(wU,wU); 
+wU = tf(1);
+WU = blkdiag(wU,wU); 
 
-A1=1e-4;
-M1=2;
-wB1=0.3;
-A2=1e-4;
-M2=2;
-wB2=0.3;
+A1 = 1e-4;
+M1 = 2;
+wB1 = 0.3;
+A2 = 1e-4;
+M2 = 2;
+wB2 = 0.3;
 
 wP1 = makeweight(1/A1,wB1,1/M1);
 wP2 = makeweight(1/A2,wB2,1/M2);
@@ -69,7 +69,7 @@ K_ms = [K_ms(1,1) 0; 0 K_ms(2,2)];
 
 % Calcolo delle matrici S, T, KS %
 S = inv(eye(2) + G_tot_n*K_ms);
-KS =K_ms*S;
+KS = K_ms*S;
 T = eye(2) - S;
 
 bodemag(S(1,1),1/wP1)
