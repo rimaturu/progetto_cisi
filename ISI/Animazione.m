@@ -113,24 +113,28 @@ if multiplot
         hold on
         plot(q_hat_computed.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 3), 'b', 'LineWidth', 1, 'DisplayName', "x\_EKF");
         plot(q_true.Time(1:i_sampled), q_true.Data(1, 1:i_sampled), 'g', 'LineWidth', 1, 'DisplayName', "x\_true");
-        plot(q_true.Time(1:i_sampled), q_k_n(3, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "x\_smooth\_EKF");
-        title('x\_hat vs x\_true vs x\_smooth\_EKF');
+        % plot(q_true.Time(1:i_sampled), q_k_n(3, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "x\_smooth\_EKF");
+        % title('x\_hat vs x\_true vs x\_smooth\_EKF');
+        title('x\_hat vs x\_true');
         xlabel('Time');
         ylabel('x [m]');
         grid on;
-        legend("x EKF", "x true", "x smooth EKF");
+        % legend("x EKF", "x true", "x smooth EKF");
+        legend("x EKF", "x true");
         
         % Plot q_hat_computed(4) beneath the main plot
         subplot(3,2,4);
         hold on
         plot(q_true.Time(1:i_sampled), q_hat_computed.Data(1:i_sampled, 4), 'b', 'LineWidth', 1, 'DisplayName', "theta\_EKF");
         plot(q_true.Time(1:i_sampled), q_true.Data(2, 1:i_sampled), 'g', 'LineWidth', 1, 'DisplayName', "theta\_true");
-        plot(q_true.Time(1:i_sampled), q_k_n(4, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "theta\_smooth\_EKF");
-        title('theta\_hat vs theta\_true vs theta\_smooth\_EKF');
+        % plot(q_true.Time(1:i_sampled), q_k_n(4, 1:i_sampled), 'r', 'LineWidth', 1, 'DisplayName', "theta\_smooth\_EKF");
+        % title('theta\_hat vs theta\_true vs theta\_smooth\_EKF');
+        title('theta\_hat vs theta\_true');
         xlabel('Time');
         ylabel('theta [rad]');
         grid on;
-        legend("theta\_EKF", "theta\_true", "theta\_smooth\_EKF");
+        % legend("theta\_EKF", "theta\_true", "theta\_smooth\_EKF");
+        legend("theta\_EKF", "theta\_true");
     
         % Plot x_error
         subplot(3,2,5);
